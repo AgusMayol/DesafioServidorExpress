@@ -1,0 +1,29 @@
+[
+    {
+        "title": "Módulo multi-serial serie QX",
+        "description": "Isla de válvulas Camozzi",
+        "price": 2500,
+        "thumbnail": "https://sitio.com/imagen.png",
+        "code": "abc123",
+        "stock": 4821,
+        "id": 1
+    },
+    {
+        "title": "Cilindro serie 61",
+        "description": "Cilindro neumático Camozzi",
+        "price": 2500,
+        "thumbnail": "https://sitio.com/imagen.png",
+        "code": "abc124",
+        "stock": 101,
+        "id": 2
+    },
+    {
+        "title": "Racor serie 6000M",
+        "description": "Racor super rápido Camozzi",
+        "price": 2500,
+        "thumbnail": "https://sitio.com/imagen.png",
+        "code": "abc128",
+        "stock": 521,
+        "id": 3
+    }
+]
