@@ -4,37 +4,39 @@
 		"description": "Isla de válvulas Camozzi",
 		"price": 2500,
 		"thumbnail": "https://sitio.com/imagen.png",
-		"code": "abc123",
+		"category": "islas",
+		"code": "s2",
 		"stock": 4821,
-		"id": 1
+		"id": 324
 	},
 	{
 		"title": "Cilindro serie 61",
 		"description": "Cilindro neumático Camozzi",
 		"price": 2500,
 		"thumbnail": "https://sitio.com/imagen.png",
-		"code": "abc124",
+		"category": "cilindros",
+		"code": "s61",
 		"stock": 101,
-		"id": 2
+		"id": 655
 	},
 	{
 		"title": "Racor serie 6000M",
 		"description": "Racor super rápido Camozzi",
 		"price": 2500,
 		"thumbnail": "https://sitio.com/imagen.png",
-		"code": "abc128",
+		"category": "racores",
+		"code": "s6000M",
 		"stock": 521,
 		"id": 3
 	},
 	{
-		"title": "Nombre de producto actualizado",
-		"description": "descripción actualizada",
-		"price": 2,
-		"thumbnail": "foto actualizada",
-		"category": "prueba2",
-		"status": true,
-		"code": "123",
-		"stock": 7,
-		"id": "62e68913-fc11-44fb-9f6c-d95c24894103"
+		"title": "Producto eliminable",
+		"description": "Prueba eliminarme",
+		"price": 0,
+		"category": "pruebas",
+		"code": "1",
+		"stock": 0,
+		"id": "f97f3466-a2b5-456b-858f-51f9549432a2",
+		"status": true
 	}
 ]

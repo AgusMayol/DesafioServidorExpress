@@ -30,6 +30,8 @@ router.put("/:pid", async (req, res) => {
     res.send({ status: "success" });
 });
 
+//DELETE
+
 router.delete("/:pid", async (req, res) => {
     const id = req.params.pid;
 
