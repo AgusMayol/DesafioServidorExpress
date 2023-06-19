@@ -3,8 +3,11 @@ import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
 
-import ProductManager from "./classes/ProductsManager.class.js";
+import ProductManager from "./daos/mongodb/ProductsManager.class.js";
 export const productHandling = new ProductManager();
+
+import ChatManager from "./daos/mongodb/ChatManager.class.js";
+export const chatHandling = new ChatManager();
 
 import routerViews from "./routes/views.router.js";
 import routerProducts from './routes/products.router.js';
@@ -20,34 +23,54 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
 
+app.use("/", routerViews);
 app.use('/api/products/', routerProducts)
 app.use('/api/carts/', routerCart)
-app.use("/", routerViews);
 
 const expressServer = app.listen(8080, () => console.log("Servidor levantado en el puerto 8080"));
 const socketServer = new Server(expressServer);
 
-const products = await productHandling.getProducts();
+const productos = await productHandling.getProducts();
+const mensajes = await chatHandling.getMessages();
 
 socketServer.on("connection", (socket) => {
-    socketServer.emit('products', products);
+    socketServer.emit('products', productos);
+    socketServer.emit('mensajes', mensajes);
 
     console.log("connected " + socket.id);
 
     // Añadimos el producto al archivo
-    socket.on('addProduct', (product) => {
-        productHandling.addProduct(product);
+    socket.on('addProduct', async (product) => {
+        await productHandling.addProduct(product);
         console.log(product)
-        console.log("Producto añadido al archivo!")
-        socketServer.emit('products', products);
+        console.log("Producto añadido a la base de datos")
+        socketServer.emit('products', await productHandling.getProducts());
     })
 
     // Eliminamos el producto del archivo
-    socket.on('deleteProduct', (productId) => {
-        productHandling.deleteProduct(productId);
+    socket.on('deleteProduct', async (productId) => {
+        await productHandling.deleteProduct(productId);
         console.log(productId)
-        console.log("Producto eliminado del archivo!")
-        socketServer.emit('products', products);
+        console.log("Producto eliminado de la base de datos")
+        socketServer.emit('products', await productHandling.getProducts());
+    })
+
+    // ---------[CHAT]--------
+
+    // Añadimos el producto al archivo
+    socket.on('addMessage', async (message) => {
+        await chatHandling.addMessage(message);
+        console.log(message)
+        console.log("Mensaje guardado en la base de datos")
+        socketServer.emit('mensajes', await chatHandling.getMessages());
+    })
+
+    // Eliminamos el producto del archivo
+    socket.on('deleteMessage', async (messageId) => {
+        await chatHandling.deleteMessage(messageId);
+        console.log(messageId)
+        console.log("Mensaje eliminado de la base de datos")
+        socketServer.emit('mensajes', await chatHandling.getMessages());
     })
 
 });

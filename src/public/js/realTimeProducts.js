@@ -10,8 +10,6 @@ const category = document.getElementById("category")
 const code = document.getElementById("code")
 const stock = document.getElementById("stock")
 
-//let productosGlobal = [];
-
 function convertirAHTML(productos) {
     let html = '';
 
@@ -23,7 +21,7 @@ function convertirAHTML(productos) {
         html += '<td class="px-4 py-2 border-b">' + producto.category + '</td>';
         html += '<td class="px-4 py-2 border-b">' + producto.code + '</td>';
         html += '<td class="px-4 py-2 border-b">' + producto.stock + '  unidades</td>';
-        html += `<td class="px-4 py-2 border-b"> <button type="button" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onclick='deleteProduct("${producto.id}")'>Eliminar</button> </td>`;
+        html += `<td class="px-4 py-2 border-b"> <button type="button" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onclick='deleteProduct("${producto._id}")'>Eliminar</button> </td>`;
         html += '</tr>';
     });
 
@@ -31,7 +29,6 @@ function convertirAHTML(productos) {
 }
 
 socket.on('products', (products) => {
-    //productosGlobal = products
     table.innerHTML = convertirAHTML(products);
 })
 
@@ -50,9 +47,6 @@ boton.addEventListener("click", () => {
     data.stock = parseInt(stock.value)
 
     console.log(data)
-
-    //productosGlobal.push(data)
-    //table.innerHTML = convertirAHTML(productosGlobal);
 
     socket.emit('addProduct', data);
 

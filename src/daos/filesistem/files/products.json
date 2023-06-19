@@ -28,15 +28,5 @@
 		"code": "s6000M",
 		"stock": 521,
 		"id": 3
-	},
-	{
-		"title": "Producto eliminable",
-		"description": "Prueba eliminarme",
-		"price": 0,
-		"category": "pruebas",
-		"code": "1",
-		"stock": 0,
-		"id": "f97f3466-a2b5-456b-858f-51f9549432a2",
-		"status": true
 	}
 ]

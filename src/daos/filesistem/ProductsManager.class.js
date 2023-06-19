@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from "uuid";
 export default class ProductManager {
     constructor() {
         this.products = [];
-        this.path = "./src/classes/files/products.json";
+        this.path = "./src/daos/filesistem/files/products.json";
     }
 
     getFile = async () => {

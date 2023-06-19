@@ -1,5 +1,5 @@
 import { Router } from "express";
-import CartManager from "../classes/CartManager.class.js";
+import CartManager from "../daos/mongodb/CartManager.class.js";
 
 const router = Router();
 
@@ -9,7 +9,7 @@ const cartHandling = new CartManager();
 
 router.get("/", async (req, res) => {
     const limit = req.query.limit; // Obtener el valor del query ?limit=
-    const carts = await cartHandling.getFile(limit);
+    const carts = await cartHandling.getCarts(limit);
     res.send(carts);
 });
 
