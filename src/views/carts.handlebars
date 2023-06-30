@@ -1,0 +1,52 @@
+<div class="overflow-x-auto p-8">
+
+<div class="w-full flex flex-row justify-between items-center">
+    <a id="backButton" href="/carts" class="p-2 px-4 bg-gray-300 rounded-md hidden">
+        Ir atrás
+    </a>
+
+    <h2 class="font-extrabold text-2xl text-center mx-auto" id="title">Carts</h2>
+
+</div>
+
+    <table class="table-auto w-full border border-gray-300 mt-4">
+        <thead>
+            <tr>
+                <th class="px-4 py-2 bg-gray-100 border-b">ID</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Productos</th>
+                <th id="quantityTh" class="px-4 py-2 bg-gray-100 border-b hidden">Cantidad</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Acción</th>
+            </tr>
+        </thead>
+        <tbody id="table">
+            {{#each carts}}
+            <tr>
+                <td class="px-4 py-2 border-b">{{this._id}}</td>
+                <td class="px-4 py-2 border-b">{{this.products.length}} productos</td>
+                <td class="px-4 py-2 border-b">
+                    <a href="/carts?id={{this._id}}"
+                        class="flex w-full justify-center rounded-md bg-indigo-600 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+
+                    </a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+<div id="botones" class="flex items-center gap-4 hidden">
+
+<button type="button" class="mt-16 flex w-full justify-center rounded-md border-2 bg-transparent text-black border-red-700 py-1.5 text-sm font-semibold leading-6 hover:text-white shadow-sm hover:bg-red-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onclick="deleteAllProductsFromCart()">Eliminar todos los productos del carrito</button>
+
+<button type="button" class="mt-16 flex w-full justify-center rounded-md bg-red-700 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onclick="deleteCart()">Eliminar carrito</button>
+</div>
+    
+
+</div>
+
+<script src="/js/carts.js"></script>

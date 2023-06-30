@@ -1,0 +1,25 @@
+<div class="overflow-x-auto p-8">
+    <h2 class="font-extrabold text-2xl text-center">Product {{product._id}}</h2>
+    <table class="table-auto w-full border border-gray-300 mt-4">
+        <thead>
+            <tr>
+                <th class="px-4 py-2 bg-gray-100 border-b">Nombre</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Descripción</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Precio</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Categoría</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Código</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="px-4 py-2 border-b">{{product.title}}</td>
+                <td class="px-4 py-2 border-b">{{product.description}}</td>
+                <td class="px-4 py-2 border-b">${{product.price}}</td>
+                <td class="px-4 py-2 border-b">{{product.category}}</td>
+                <td class="px-4 py-2 border-b">{{product.code}}</td>
+                <td class="px-4 py-2 border-b">{{product.stock}} unidades</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

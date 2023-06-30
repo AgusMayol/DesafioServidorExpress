@@ -8,7 +8,7 @@ const cartHandling = new CartManager();
 //GET
 
 router.get("/", async (req, res) => {
-    const limit = req.query.limit; // Obtener el valor del query ?limit=
+    const limit = req.query.limit || undefined; // Obtener el valor del query ?limit=
     const carts = await cartHandling.getCarts(limit);
     res.send(carts);
 });
@@ -29,9 +29,32 @@ router.post("/", async (req, res) => {
 router.post("/:cid/products/:pid", async (req, res) => {
     const cartId = req.params.cid;
     const productId = req.params.pid;
-    const quantity = req.query.quantity; // Obtener la cantidad de productos a comprar ?quantity=
+    const quantity = req.query.quantity || undefined; // Obtener la cantidad de productos a comprar ?quantity=
 
     await cartHandling.addProductToCart(cartId, productId, quantity);
+    res.send({ status: "success" });
+});
+
+//DELETE
+
+router.delete("/:cid/product/:pid", async (req, res) => {
+    let cartId = req.params.cid;
+    let productId = req.params.pid;
+
+    await cartHandling.deleteProductFromCart(cartId, productId);
+
+    res.send({ status: "success" });
+});
+
+router.delete("/:cid", async (req, res) => {
+    let cartId = req.params.cid;
+    await cartHandling.deleteAllProductsFromCart(cartId);
+    res.send({ status: "success" });
+});
+
+router.delete("/deleteCart/:cid", async (req, res) => {
+    let cartId = req.params.cid;
+    await cartHandling.deleteCart(cartId);
     res.send({ status: "success" });
 });
 
