@@ -35,19 +35,17 @@ const socketServer = new Server(expressServer);
 
 socketServer.on("connection", async (socket) => {
 
-    //Cambiamos la lógica de que cada usuario haga un fetch a los productos por su cuenta, así permitimos conservar los parametros de búsqueda de cada persona.
-
-    socket.emit('fetch'); //Hace que el usuario hagan un fetch
-    //socketServer.emit('fetch'); //Hace que TODOS hagan un fetch
-
-    socket.emit('mensajes', await chatHandling.getMessages());
     console.log("・Usuario conectado: " + socket.id);
+
+    socket.emit('fetch'); //Hace que el usuario haga un fetch para conseguir el listado de productos
+    socket.emit('mensajes', await chatHandling.getMessages()); //Pendiente: hacerlo en formato de fetch individual.
+
+    // ---------[REAL TIME PRODUCTS]--------
 
     // Añadimos el producto al archivo
     socket.on('addProduct', async (product) => {
         await productHandling.addProduct(product);
         console.log("✅ Producto añadido a la base de datos\n")
-        //socketServer.emit('products', await productHandling.getProducts());
         socketServer.emit('fetch')
     })
 
@@ -56,7 +54,6 @@ socketServer.on("connection", async (socket) => {
         console.log(`- ID del producto a eliminar: ${productId}`)
         await productHandling.deleteProduct(productId);
         console.log("✅ Producto eliminado de la base de datos\n")
-        //socketServer.emit('products', await productHandling.getProducts());
         socketServer.emit('fetch')
     })
 
@@ -66,7 +63,7 @@ socketServer.on("connection", async (socket) => {
     socket.on('addMessage', async (message) => {
         await chatHandling.addMessage(message);
         console.log("✅ Mensaje guardado en la base de datos\n")
-        socketServer.emit('mensajes', await chatHandling.getMessages());
+        socketServer.emit('mensajes', await chatHandling.getMessages()); //Pendiente: hacerlo en formato de fetch individual.
     })
 
     // Eliminamos el producto del archivo
@@ -74,7 +71,7 @@ socketServer.on("connection", async (socket) => {
         console.log(`- ID del mensaje a eliminar: ${messageId}`)
         await chatHandling.deleteMessage(messageId);
         console.log("✅ Mensaje eliminado de la base de datos\n")
-        socketServer.emit('mensajes', await chatHandling.getMessages());
+        socketServer.emit('mensajes', await chatHandling.getMessages()); //Pendiente: hacerlo en formato de fetch individual.
     })
 
 });

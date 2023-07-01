@@ -39,7 +39,6 @@ router.get("/:pid", async (req, res) => {
 router.put("/:pid", async (req, res) => {
     const id = req.params.pid;
     const data = req.body;
-    console.log(req.body);
 
     productHandling.updateProduct(id, data);
     res.send({ status: "success" });

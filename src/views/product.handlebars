@@ -9,6 +9,7 @@
                 <th class="px-4 py-2 bg-gray-100 border-b">Categoría</th>
                 <th class="px-4 py-2 bg-gray-100 border-b">Código</th>
                 <th class="px-4 py-2 bg-gray-100 border-b">Stock</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Acción</th>
             </tr>
         </thead>
         <tbody>
@@ -19,7 +20,44 @@
                 <td class="px-4 py-2 border-b">{{product.category}}</td>
                 <td class="px-4 py-2 border-b">{{product.code}}</td>
                 <td class="px-4 py-2 border-b">{{product.stock}} unidades</td>
+                <td class="px-4 py-2 border-b">
+                    <button type="button"
+                        class="flex w-full justify-center rounded-md bg-green-700 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onclick='addProductToCart("{{product._id}}")'><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                        </svg>
+
+                    </button>
+                </td>
             </tr>
         </tbody>
     </table>
 </div>
+
+<script>
+    let cartId;
+
+    async function addProductToCart(pid) {
+        if (!localStorage.getItem('cartId')) {
+            let newCart = await fetch(`/api/carts`, { method: 'POST', })
+            const data = await newCart.json();
+            localStorage.setItem('cartId', data.response._id);
+        }
+    
+    cartId = localStorage.getItem('cartId');
+
+    let quantity = prompt("¿Cuantas unidades del producto deseas añadir?") || 1;
+
+    let addProductToCart = await fetch(`/api/carts/${cartId}/products/${pid}?quantity=${quantity}`, { method: 'POST', })
+    const data2 = await addProductToCart.json();
+
+    if(data2.status !== "success") {
+        return alert("Hubo un error al intentar añadir el producto al carrito.")
+    }
+
+    alert("Se ha añadido el producto al carrito")
+
+    }
+</script>

@@ -8,7 +8,7 @@ const cartHandling = new CartManager();
 //GET
 
 router.get("/", async (req, res) => {
-    const limit = req.query.limit || undefined; // Obtener el valor del query ?limit=
+    const limit = req.query.limit || undefined;
     const carts = await cartHandling.getCarts(limit);
     res.send(carts);
 });
@@ -22,16 +22,33 @@ router.get("/:cid", async (req, res) => {
 //POST
 
 router.post("/", async (req, res) => {
-    await cartHandling.addCart();
-    res.send({ status: "success" });
+    let response = await cartHandling.addCart();
+    res.send({ status: "success", response: response });
 });
 
 router.post("/:cid/products/:pid", async (req, res) => {
     const cartId = req.params.cid;
     const productId = req.params.pid;
-    const quantity = req.query.quantity || undefined; // Obtener la cantidad de productos a comprar ?quantity=
+    const quantity = req.query.quantity || undefined;
 
     await cartHandling.addProductToCart(cartId, productId, quantity);
+    res.send({ status: "success" });
+});
+
+router.post("/:cid", async (req, res) => {
+    const cartId = req.params.cid;
+    const products = req.query.products || undefined;
+
+    await cartHandling.replaceProducts(cartId, products);
+    res.send({ status: "success" });
+});
+
+router.post("/:cid/productQuantity/:pid", async (req, res) => {
+    const cartId = req.params.cid;
+    const productId = req.params.pid;
+    const quantity = req.query.quantity || undefined;
+
+    await cartHandling.changeProductQuantity(cartId, productId, quantity);
     res.send({ status: "success" });
 });
 

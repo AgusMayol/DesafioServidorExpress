@@ -59,7 +59,6 @@ socket.on('fetch', async () => {
         const data = await cart.json();
         table.innerHTML = convertirAHTML(data);
         console.log("Se hizo un fetch")
-        console.log(data)
         actualData = data
 
         //Botones de paginacion
@@ -71,9 +70,8 @@ socket.on('fetch', async () => {
             nextButton.style.backgroundColor = "#818cf8"
         }
 
-
     } catch (error) {
-        console.log(error)
+        (error)
     }
 })
 

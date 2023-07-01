@@ -16,12 +16,6 @@ router.get('/', async (req, res) => {
 router.get('/product/:pid', async (req, res) => {
     const id = req.params.pid;
     const product = await productHandling.getProductById(id);
-    console.log(product)
-
-    if (!product) {
-        res.send("No se encontró el producto");
-        return;
-    }
 
     res.render('product', { title: "Producto", product: product });
 })

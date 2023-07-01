@@ -46,6 +46,24 @@ export default class CartManager {
         return result;
     };
 
+    changeProductQuantity = async (cid, pid, quantity = 1) => {
+        const cart = await this.getCartById(cid);
+        const productIndex = cart.products.findIndex(
+            (product) => product.product.toString() === pid
+        );
+        if (productIndex !== -1) {
+            cart.products[productIndex].quantity = quantity;
+            await cart.save();
+        }
+    };
+
+    replaceProducts = async (cid, newProducts) => {
+        const cart = await this.getCartById(cid);
+        cart.products = newProducts;
+        await cart.save();
+    };
+
+
     deleteProductFromCart = async (cid, pid) => {
         const cart = await this.getCartById(cid);
         cart.products = cart.products.filter((product) => {
