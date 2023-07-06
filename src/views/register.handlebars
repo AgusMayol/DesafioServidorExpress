@@ -1,0 +1,55 @@
+<div class="w-full flex flex-col items-center justify-center gap-4">
+    <h2 class="font-bold text-xl">Registro</h2>
+    <form id="registerForm" class="w-72 flex flex-col items-center gap-4">
+
+        <div class="w-full">
+            <label for="first_name" class="block text-sm font-medium leading-6 text-gray-900">Nombre</label>
+            <div class="relative mt-2 rounded-md shadow-sm w-full">
+                <input type="text" name="first_name" id="first_name"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </div>
+        </div>
+
+        <div class="w-full">
+            <label for="last_name" class="block text-sm font-medium leading-6 text-gray-900">Apellido</label>
+            <div class="relative mt-2 rounded-md shadow-sm w-full">
+                <input type="text" name="last_name" id="last_name"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </div>
+        </div>
+
+
+        <div class="w-full">
+            <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+            <div class="relative mt-2 rounded-md shadow-sm w-full">
+                <input type="email" name="email" id="email"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </div>
+        </div>
+
+        <div class="w-full">
+            <label for="age" class="block text-sm font-medium leading-6 text-gray-900">Edad</label>
+            <div class="relative mt-2 rounded-md shadow-sm w-full">
+                <input type="number" name="age" id="age"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </div>
+        </div>
+
+        <div class="w-full">
+            <label for="lpassword" class="block text-sm font-medium leading-6 text-gray-900">Contraseña</label>
+            <div class="relative mt-2 rounded-md shadow-sm w-full">
+                <input type="password" name="password" id="password"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </div>
+        </div>
+
+        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 
+        text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline 
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Registrarse
+        </button>
+
+    </form>
+    <p>¿Ya tienes una cuenta? <a href="/login">Ingresa aquí</a></p>
+</div>
+<script src="/js/sessions/register.js"></script>

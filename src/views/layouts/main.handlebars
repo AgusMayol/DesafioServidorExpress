@@ -30,11 +30,21 @@
 
       <div class="flex flex-1 items-center justify-end">
         <div class="hidden sm:block">
-          <div class="flex space-x-4">
+          <div class="flex space-x-4 items-center">
             <button onclick="goToCart()" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
 </svg>
 </button>
+
+{{#if user.name}}
+            <button onclick="logout()" class="text-red-600 hover:bg-gray-700 hover:text-red-900 rounded-md px-3 py-2 text-sm font-medium">Cerrar sesión
+</button>
+{{else}}
+<a href="/login" class="text-blue-600 hover:bg-gray-700 hover:text-blue-900 rounded-md px-3 py-2 text-sm font-medium">Iniciar sesión
+</a>
+    {{/if}}
+
+
           </div>
         </div>
       </div>
@@ -60,6 +70,18 @@
         window.location = `/carts?id=${cartOwnId}`
     }
 
+async function logout() {
+  fetch('/api/sessions/logout', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(result => {
+        if (result.status === 200) {
+            window.location.replace('/login');
+        }
+    })
+}
 
     </script>
 </body>

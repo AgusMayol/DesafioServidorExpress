@@ -1,4 +1,9 @@
 <div class="overflow-x-auto p-8">
+    
+    {{#if user.name}}
+            <span>Welcome {{user.name}}!</span>
+    {{/if}}
+    
     <h2 class="font-extrabold text-2xl text-center">Products</h2>
     <table class="table-auto w-full border border-gray-300 mt-4">
         <thead>
