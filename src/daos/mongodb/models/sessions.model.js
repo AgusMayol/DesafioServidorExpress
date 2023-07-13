@@ -9,7 +9,8 @@ const SessionSchema = new mongoose.Schema({
     },
     last_name: {
         type: String,
-        required: true
+        default: "",
+        required: false
     },
     email: {
         type: String,

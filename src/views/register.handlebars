@@ -1,6 +1,10 @@
-<div class="w-full flex flex-col items-center justify-center gap-4">
+<div class="p-8 mx-auto w-full flex flex-col items-center justify-center gap-4">
     <h2 class="font-bold text-xl">Registro</h2>
     <form id="registerForm" class="w-72 flex flex-col items-center gap-4">
+
+        <a href='/api/sessions/github'><button type="button" class="flex w-full justify-center rounded-md bg-[#0f172a] px-3 py-1.5 
+        text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#1e293b] focus-visible:outline 
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mb-8">Registrarme con github</button></a>
 
         <div class="w-full">
             <label for="first_name" class="block text-sm font-medium leading-6 text-gray-900">Nombre</label>
@@ -20,7 +24,7 @@
 
 
         <div class="w-full">
-            <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+            <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Correo electrónico</label>
             <div class="relative mt-2 rounded-md shadow-sm w-full">
                 <input type="email" name="email" id="email"
                     class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">

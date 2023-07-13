@@ -6,6 +6,14 @@ import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
 
+import routerViews from "./routes/views.router.js";
+import routerProducts from './routes/products.router.js';
+import routerSessions from './routes/sessions.router.js';
+import routerCart from './routes/cart.router.js';
+
+import { intializePassport } from "./config/passport.config.js";
+import passport from "passport";
+
 import ProductManager from "./daos/mongodb/ProductsManager.class.js";
 export const productHandling = new ProductManager();
 
@@ -14,11 +22,6 @@ export const chatHandling = new ChatManager();
 
 import CartManager from "./daos/mongodb/CartManager.class.js";
 export const cartHandling = new CartManager();
-
-import routerViews from "./routes/views.router.js";
-import routerProducts from './routes/products.router.js';
-import routerSessions from './routes/sessions.router.js';
-import routerCart from './routes/cart.router.js';
 
 const app = express();
 const connection = mongoose.connect(
@@ -29,6 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
+intializePassport()
 app.use(
   session({
     store: new MongoStore({
@@ -40,6 +44,8 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+app.use(passport.initialize())
 
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
