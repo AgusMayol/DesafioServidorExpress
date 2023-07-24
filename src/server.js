@@ -11,7 +11,7 @@ import routerProducts from './routes/products.router.js';
 import routerSessions from './routes/sessions.router.js';
 import routerCart from './routes/cart.router.js';
 
-import { intializePassport } from "./config/passport.config.js";
+import { intializePassport } from "./config/github.passport.js";
 import passport from "passport";
 
 import ProductManager from "./daos/mongodb/ProductsManager.class.js";
@@ -31,8 +31,8 @@ const connection = mongoose.connect(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
+intializePassport();
 
-intializePassport()
 app.use(
   session({
     store: new MongoStore({

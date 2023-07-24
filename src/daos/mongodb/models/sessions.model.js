@@ -29,6 +29,10 @@ const SessionSchema = new mongoose.Schema({
         required: true,
         default: 0, // Valor predeterminado: 0 = user, 1 = admin
     },
+    cartId: {
+        type: String,
+        required: true,
+    }
 })
 
 export const sessionModel = mongoose.model(collection, SessionSchema)

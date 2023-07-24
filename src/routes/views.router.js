@@ -27,8 +27,12 @@ router.get('/carts', async (req, res) => {
 
 router.get('/realtimeproducts', async (req, res) => {
 
-    if (req.session.user.level != 1) {
-        res.redirect('/');
+    if (!req.session.user) return res.redirect('/login');
+
+    let nivel = req.session.user.level || 0;
+
+    if (nivel < 1) {
+        return res.status(401).send({ status: "unauthorized", message: "No tienes permisos suficientes" });
     }
 
     res.render('realTimeProducts', { title: "Productos en Tiempo Real", user: req.session.user })

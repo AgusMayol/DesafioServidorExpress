@@ -58,14 +58,16 @@
     {{{body}}}
 
     <script>
+      let HandlebarsCartId = "{{user.cartId}}"
       let cartOwnId;
 
     async function goToCart() {
-        if (!localStorage.getItem('cartId')) {
-            return alert("El carrito está vacío, prueba agregar algún producto.")
+        if (!HandlebarsCartId) {
+            alert("Para ver tu carrito, intenta iniciar sesión primero.")
+            return window.location = "/login"
         }
     
-        cartOwnId = localStorage.getItem('cartId');
+        cartOwnId = HandlebarsCartId
 
         window.location = `/carts?id=${cartOwnId}`
     }

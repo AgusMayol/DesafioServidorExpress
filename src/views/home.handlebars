@@ -46,6 +46,7 @@
                         </svg>
 
                     </button>
+                    
                 </td>
             </tr>
             {{/each}}
@@ -98,16 +99,15 @@
         window.location.search = urlParams.toString();
     }
 
-    let cartId;
+    let cartId = "";
 
     async function addProductToCart(pid) {
-        if (!localStorage.getItem('cartId')) {
-            let newCart = await fetch(`/api/carts`, { method: 'POST', })
-            const data = await newCart.json();
-            localStorage.setItem('cartId', data.response._id);
+        if (!HandlebarsCartId) {
+            alert("Para agregar productos a tu carrito, intenta iniciar sesión primero.")
+            return window.location = "/login"
         }
     
-    cartId = localStorage.getItem('cartId');
+    cartId = HandlebarsCartId
 
     let quantity = prompt("¿Cuantas unidades del producto deseas añadir?") || 1;
 

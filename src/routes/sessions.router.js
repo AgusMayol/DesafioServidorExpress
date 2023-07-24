@@ -2,6 +2,7 @@ import { Router } from "express";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import passport from "passport";
 import { createHash, isValidPassword } from "../utils.js";
+import { cartModel } from "../daos/mongodb/models/carts.model.js";
 
 const router = Router();
 
@@ -13,12 +14,16 @@ router.post("/register", async (req, res) => {
 
     password = createHash(password);
 
+    let response = await cartModel.create({ products: [] });
+    let cartId = response._id;
+
     let result = await sessionModel.create({
         first_name,
         last_name,
         email,
         age,
         password,
+        cartId
     });
     res.send({ status: "success", message: "usuario  registrado" });
 });
@@ -26,30 +31,34 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await sessionModel.findOne({ email: email });
-    if (!user) return res.redirect('/api/login')
-    if (!isValidPassword(password, user.password)) return res.redirect('/api/login')
+    if (!user) return res.redirect('/login')
+    if (!isValidPassword(password, user.password)) return res.redirect('/login')
 
     req.session.user = {
         name: user.first_name + " " + user.last_name,
         email: user.email,
         age: user.age,
-        level: user.level
-    };
+        level: user.level,
+        cartId: user.cartId
+    }
+
     res.send({ status: "success", message: req.session.user });
 });
 
-router.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Error al destruir la sesión:', err);
-        } else {
-            res.clearCookie('connect.sid'); // Eliminar la cookie de sesión
-            res.redirect('/login');
-        }
-    });
-
-    res.redirect('/login');
+router.get("/logout", (req, res) => {
+    if (req.session.user) {
+        req.session.destroy((err) => {
+            if (err) {
+                console.log("Error al destruir la sesión:", err);
+                return res.status(500).send({ status: "error", message: "Error al cerrar sesión" });
+            }
+            return res.send({ status: "success", message: "Sesión cerrada correctamente" });
+        });
+    } else {
+        return res.send({ status: "success", message: "No se encontró sesión activa" });
+    }
 });
+
 
 router.post("/restartPassword", async (req, res) => {
     const { email, password } = req.body;
@@ -90,6 +99,10 @@ router.get('/githubcallback', passport.authenticate('github', { failureRedirect:
     res.redirect('/')
 })
 
-
+router.get("/current", async (req, res) => {
+    if (!req.session.user) return res.redirect('/login');
+    res.send(req.session.user);
+}
+);
 
 export default router
