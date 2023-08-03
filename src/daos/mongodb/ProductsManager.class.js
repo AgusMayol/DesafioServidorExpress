@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { productsModel } from "./models/products.model.js";
+import { MONGODB_URL } from "../../config.js";
 
 export default class ProductManager {
-    connection = mongoose.connect(`mongodb+srv://batidalibertades0v:8X2eZX8ZERasqr1F@cluster0.khmfj9q.mongodb.net/Coder?retryWrites=true&w=majority`)
+    connection = mongoose.connect(MONGODB_URL)
 
     getProducts = async (limit = 10, page = 1, sort = 1, queryType = null, queryValue = null) => {
         let whereOptions = {};

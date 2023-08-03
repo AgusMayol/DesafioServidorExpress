@@ -1,3 +1,4 @@
+// ---------[CORE]--------
 import express from "express";
 import session from "express-session";
 import MongoStore from "connect-mongo";
@@ -6,6 +7,7 @@ import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
 
+// ---------[ROUTERS]--------
 import routerViews from "./routes/views.router.js";
 import routerProducts from './routes/products.router.js';
 import routerSessions from './routes/sessions.router.js';
@@ -14,6 +16,7 @@ import routerCart from './routes/cart.router.js';
 import { intializePassport } from "./config/github.passport.js";
 import passport from "passport";
 
+// ---------[CLASS MANAGERS]--------
 import ProductManager from "./daos/mongodb/ProductsManager.class.js";
 export const productHandling = new ProductManager();
 
@@ -23,9 +26,11 @@ export const chatHandling = new ChatManager();
 import CartManager from "./daos/mongodb/CartManager.class.js";
 export const cartHandling = new CartManager();
 
+import { SECRET, MONGODB_URL, PORT } from "./config.js";
+
 const app = express();
 const connection = mongoose.connect(
-  "mongodb+srv://batidalibertades0v:8X2eZX8ZERasqr1F@cluster0.khmfj9q.mongodb.net/Coder?retryWrites=true&w=majority",
+  MONGODB_URL,
 );
 
 app.use(express.json());
@@ -37,9 +42,9 @@ app.use(
   session({
     store: new MongoStore({
       mongoUrl:
-        "mongodb+srv://batidalibertades0v:8X2eZX8ZERasqr1F@cluster0.khmfj9q.mongodb.net/Coder?retryWrites=true&w=majority",
+        MONGODB_URL,
     }),
-    secret: "mongoSecret",
+    secret: SECRET,
     resave: true,
     saveUninitialized: false,
   })
@@ -56,7 +61,7 @@ app.use('/api/products/', routerProducts)
 app.use('/api/sessions/', routerSessions)
 app.use('/api/carts/', routerCart)
 
-const expressServer = app.listen(8080, () => console.log("🌐 Servidor levantado en el puerto 8080"));
+const expressServer = app.listen(PORT, () => console.log("🌐 Servidor levantado en el puerto 8080"));
 const socketServer = new Server(expressServer);
 
 socketServer.on("connection", async (socket) => {

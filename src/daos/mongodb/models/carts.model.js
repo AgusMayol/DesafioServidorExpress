@@ -12,7 +12,7 @@ const cartSchema = new mongoose.Schema({
             quantity: {
                 type: Number,
                 required: true,
-                default: 1, // Valor predeterminado de la cantidad si no se proporciona
+                default: 1,
             },
         },
     ],

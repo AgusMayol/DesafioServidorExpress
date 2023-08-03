@@ -3,15 +3,16 @@ import GithubStrategy from "passport-github2";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { createHash } from "../utils.js";
 import { uuid } from 'uuidv4';
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK_URL } from "../config.js";
 
 export const intializePassport = () => {
     passport.use(
         "github",
         new GithubStrategy(
             {
-                clientID: "25a9591e02eaca86e754",
-                clientSecret: "1f36de1c7f15ba1ccb46a858adba7155a47410c0",
-                callbackURL: "http://localhost:8080/api/sessions/githubcallback",
+                clientID: GITHUB_CLIENT_ID,
+                clientSecret: GITHUB_CLIENT_SECRET,
+                callbackURL: GITHUB_CALLBACK_URL,
             },
             async (accessToken, refreshToken, profile, done) => {
                 console.log(profile)
