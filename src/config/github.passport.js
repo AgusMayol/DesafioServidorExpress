@@ -2,7 +2,7 @@ import passport from "passport";
 import GithubStrategy from "passport-github2";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { createHash } from "../utils.js";
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK_URL } from "../config.js";
 
 export const intializePassport = () => {
@@ -25,7 +25,7 @@ export const intializePassport = () => {
                         last_name: "",
                         email: profile.id,
                         age: 18,
-                        password: createHash(uuid()), //Creamos un hash a partir de un UID generado
+                        password: createHash(v4()), //Creamos un hash a partir de un UID generado
                     };
                     const result = await sessionModel.create(newUser);
                     done(null, result);

@@ -100,7 +100,7 @@ router.get('/githubcallback', passport.authenticate('github', { failureRedirect:
 })
 
 router.get("/current", async (req, res) => {
-    if (!req.session.user) return res.redirect('/login');
+    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized" });
     res.send(req.session.user);
 }
 );

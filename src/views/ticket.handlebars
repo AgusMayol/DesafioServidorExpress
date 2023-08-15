@@ -1,0 +1,36 @@
+<div class="overflow-x-auto p-8">
+    <h2 class="font-extrabold text-2xl text-center">Ticket {{ticket._id}}</h2>
+    <table class="table-auto w-full border border-gray-300 mt-4">
+        <thead>
+            <tr>
+                <th class="px-4 py-2 bg-gray-100 border-b">Código</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Comprador</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Productos comprados</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Productos rechazados (sin stock)</th>
+                <th class="px-4 py-2 bg-gray-100 border-b">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="px-4 py-2 border-b">{{ticket.code}}</td>
+                <td class="px-4 py-2 border-b">{{ticket.purchaser}}</td>
+                <td class="px-4 py-2 border-b">${{ticket.amount}}</td>
+                <td class="px-4 py-2 border-b">{{ticket.missing}}</td>
+                <td class="px-4 py-2 border-b">{{ticket.createdAt}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    
+</div>
+
+<div class="flex flex-col items-center jutify-center gap-2">
+    <span>
+        Se han borrado los productos comprados de tu carrito.
+    </span>
+
+    <span>
+        Los productos que no tienen stock actualmente siguen en el carrito para comprarlos en un futuro.
+    </span>
+</div>
+

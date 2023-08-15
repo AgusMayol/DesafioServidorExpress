@@ -69,6 +69,7 @@ export default class CartManager {
             return product._id.toString() !== pid.toString();
         });
         await cart.save();
+        return cart
     };
 
     deleteAllProductsFromCart = async (cid) => {

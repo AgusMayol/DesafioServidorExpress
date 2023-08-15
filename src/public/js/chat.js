@@ -6,12 +6,12 @@ const messageContent = document.getElementById("mensaje")
 let username = "";
 
 //Identificar usuario
-window.addEventListener("load", function (event) {
-    if (!localStorage.getItem('username')) {
-        username = this.prompt("¿Cuál es tu nombre?");
-        this.localStorage.setItem('username', username);
-    }
-    username = localStorage.getItem('username')
+window.addEventListener("load", async function (event) {
+    let usersession = await fetch(`/api/sessions/current`, {
+        method: 'GET',
+    })
+    const data = await usersession.json();
+    username = data.name
 });
 
 function convertirAHTML(mensajes) {

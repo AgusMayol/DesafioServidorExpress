@@ -7,6 +7,7 @@ const productHandling = new ProductManager();
 
 //GET
 
+//Obtener TODOS los productos
 router.get("/", async (req, res) => {
     let limit = Number(req.query.limit) || undefined;
     let page = Number(req.query.page) || undefined;
@@ -22,6 +23,7 @@ router.get("/", async (req, res) => {
     res.send(products);
 });
 
+//Obtener un producto por su ID
 router.get("/:pid", async (req, res) => {
     const id = req.params.pid;
     const product = await productHandling.getProductById(id);
@@ -36,9 +38,13 @@ router.get("/:pid", async (req, res) => {
 
 //PUT
 
+//Actualizar un producto
 router.put("/:pid", async (req, res) => {
     const id = req.params.pid;
     const data = req.body;
+
+    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+    if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
 
     productHandling.updateProduct(id, data);
     res.send({ status: "success" });
@@ -46,8 +52,12 @@ router.put("/:pid", async (req, res) => {
 
 //DELETE
 
+//Eliminar un producto
 router.delete("/:pid", async (req, res) => {
     const id = req.params.pid;
+
+    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+    if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
 
     productHandling.deleteProduct(id);
     res.send({ status: "success" });
@@ -55,9 +65,13 @@ router.delete("/:pid", async (req, res) => {
 
 //POST
 
+//Añadir un producto
 router.post("/", async (req, res) => {
     console.log(req.body);
     const product = req.body;
+
+    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+    if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
 
     productHandling.addProduct(product);
     res.send({ status: "success" });

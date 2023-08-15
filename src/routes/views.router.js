@@ -1,6 +1,7 @@
 import { Router } from "express";
 const router = Router();
 import { productHandling, cartHandling } from "../server.js";
+import { TicketModel } from "../daos/mongodb/models/ticket.model.js";
 
 router.get('/', async (req, res) => {
     let limit = Number(req.query.limit) || undefined;
@@ -39,6 +40,9 @@ router.get('/realtimeproducts', async (req, res) => {
 });
 
 router.get('/chat', async (req, res) => {
+
+    if (!req.session.user) return res.redirect('/login');
+
     res.render('chat', { title: "Chat", user: req.session.user })
 });
 
@@ -52,6 +56,17 @@ router.get('/login', (req, res) => {
 
 router.get('/resetPassword', (req, res) => {
     res.render('resetPassword');
+})
+
+router.get('/ticket/:tid', async (req, res) => {
+    let ticketId = req.params.tid;
+
+    if (!ticketId) {
+        res.redirect('/');
+    }
+
+    let ticket = await TicketModel.findOne({ _id: ticketId }).lean();
+    res.render('ticket', { title: "Resumen de compra", user: req.session.user, ticket: ticket })
 })
 
 
