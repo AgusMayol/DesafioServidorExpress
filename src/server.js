@@ -12,6 +12,7 @@ import routerViews from "./routes/views.router.js";
 import routerProducts from './routes/products.router.js';
 import routerSessions from './routes/sessions.router.js';
 import routerCart from './routes/cart.router.js';
+import routerMocking from './routes/mocking.router.js';
 
 import { intializePassport } from "./config/github.passport.js";
 import passport from "passport";
@@ -60,6 +61,7 @@ app.use("/", routerViews);
 app.use('/api/products/', routerProducts)
 app.use('/api/sessions/', routerSessions)
 app.use('/api/carts/', routerCart)
+app.use('/api/mocking/', routerMocking)
 
 const expressServer = app.listen(PORT, () => console.log("🌐 Servidor levantado en el puerto 8080"));
 const socketServer = new Server(expressServer);

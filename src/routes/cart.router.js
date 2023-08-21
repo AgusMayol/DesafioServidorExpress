@@ -3,6 +3,7 @@ import CartManager from "../daos/mongodb/CartManager.class.js";
 import ProductManager from "../daos/mongodb/ProductsManager.class.js";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { TicketModel } from "../daos/mongodb/models/ticket.model.js";
+import { sendEmail } from "../mail.js";
 
 const router = Router();
 
@@ -111,6 +112,8 @@ router.post("/:cid/purchase", async (req, res) => {
     const user = await sessionModel.findOne({ cartId: cartId }).select('-password');
 
     purchaser = user.email;
+
+    sendEmail(user.email, "[TEST] Thanks for your purchase!", `you have purchased ${amount} items in our store!`)
 
     const ticket = await TicketModel.create({ amount: amount, missing: missing, purchaser: purchaser });
 
