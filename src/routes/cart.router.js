@@ -14,145 +14,195 @@ const productHandling = new ProductManager();
 
 //Obtener TODOS los carritos
 router.get("/", async (req, res) => {
-    const limit = req.query.limit || undefined;
-    const carts = await cartHandling.getCarts(limit);
-    res.send(carts);
+    try {
+        const limit = req.query.limit || undefined;
+        const carts = await cartHandling.getCarts(limit);
+        res.send(carts);
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //Obtener un carrito por ID
 router.get("/:cid", async (req, res) => {
-    const id = req.params.cid;
-    const cart = await cartHandling.getCartById(id);
-    res.send(cart);
+    try {
+        const id = req.params.cid;
+        const cart = await cartHandling.getCartById(id);
+        res.send(cart);
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //POST
 
 //Crear carrito
 router.post("/", async (req, res) => {
-    let response = await cartHandling.addCart();
-    res.send({ status: "success", response: response });
+    try {
+        let response = await cartHandling.addCart();
+        res.send({ status: "success", response: response });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //Añadir producto al carrito
 router.post("/:cid/products/:pid", async (req, res) => {
-    const cartId = req.params.cid;
-    const productId = req.params.pid;
-    const quantity = req.query.quantity || undefined;
+    try {
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+        const quantity = req.query.quantity || undefined;
 
-    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-    if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
 
-    await cartHandling.addProductToCart(cartId, productId, quantity);
-    res.send({ status: "success" });
+        await cartHandling.addProductToCart(cartId, productId, quantity);
+        res.send({ status: "success" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //Reemplazar los productos de un carrito
 router.post("/:cid", async (req, res) => {
-    const cartId = req.params.cid;
-    const products = req.query.products || undefined;
+    try {
+        const cartId = req.params.cid;
+        const products = req.query.products || undefined;
 
-    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-    if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
 
-    await cartHandling.replaceProducts(cartId, products);
-    res.send({ status: "success" });
+        await cartHandling.replaceProducts(cartId, products);
+        res.send({ status: "success" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //Cambiar la cantidad de un producto en un carrito
 router.post("/:cid/productQuantity/:pid", async (req, res) => {
-    const cartId = req.params.cid;
-    const productId = req.params.pid;
-    const quantity = req.query.quantity || undefined;
+    try {
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+        const quantity = req.query.quantity || undefined;
 
-    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-    if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
 
-    await cartHandling.changeProductQuantity(cartId, productId, quantity);
-    res.send({ status: "success" });
+        await cartHandling.changeProductQuantity(cartId, productId, quantity);
+        res.send({ status: "success" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //Crear ticket de la compra
 router.post("/:cid/purchase", async (req, res) => {
-    const cartId = req.params.cid;
+    try {
+        const cartId = req.params.cid;
 
-    //Valores finales del ticket
-    let amount = 0;
-    let missing = 0;
-    let purchaser = "";
+        //Valores finales del ticket
+        let amount = 0;
+        let missing = 0;
+        let purchaser = "";
 
 
-    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-    if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
 
-    const cart = await cartHandling.getCartById(cartId);
+        const cart = await cartHandling.getCartById(cartId);
 
-    for (const producto of cart.products) {
+        for (const producto of cart.products) {
 
-        const product = await productHandling.getProductById(producto.product._id);
+            const product = await productHandling.getProductById(producto.product._id);
 
-        if (product.stock >= producto.quantity) {
+            if (product.stock >= producto.quantity) {
 
-            amount = amount + 1;
-            let updatedStock = product.stock - producto.quantity;
+                amount = amount + 1;
+                let updatedStock = product.stock - producto.quantity;
 
-            const deleteProductFromCart = await cartHandling.deleteProductFromCart(cartId, producto._id);
-            const updateProduct = await productHandling.updateProduct(product._id, { stock: updatedStock });
+                const deleteProductFromCart = await cartHandling.deleteProductFromCart(cartId, producto._id);
+                const updateProduct = await productHandling.updateProduct(product._id, { stock: updatedStock });
 
-        } else {
+            } else {
 
-            missing = missing + 1;
+                missing = missing + 1;
+
+            }
 
         }
 
+        if (amount == 0) return res.status(500).send({ status: "error", message: "There is no stock left for the products in the cart." });
+
+        const user = await sessionModel.findOne({ cartId: cartId }).select('-password');
+
+        purchaser = user.email;
+
+        sendEmail(user.email, "[TEST] Thanks for your purchase!", `you have purchased ${amount} items in our store!`)
+
+        const ticket = await TicketModel.create({ amount: amount, missing: missing, purchaser: purchaser });
+
+        res.send(ticket);
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
     }
-
-    if (amount == 0) return res.status(500).send({ status: "error", message: "There is no stock left for the products in the cart." });
-
-    const user = await sessionModel.findOne({ cartId: cartId }).select('-password');
-
-    purchaser = user.email;
-
-    sendEmail(user.email, "[TEST] Thanks for your purchase!", `you have purchased ${amount} items in our store!`)
-
-    const ticket = await TicketModel.create({ amount: amount, missing: missing, purchaser: purchaser });
-
-    res.send(ticket);
 });
 
 //DELETE
 
 //Eliminar un producto de un carrito
 router.delete("/:cid/product/:pid", async (req, res) => {
-    let cartId = req.params.cid;
-    let productId = req.params.pid;
+    try {
+        let cartId = req.params.cid;
+        let productId = req.params.pid;
 
-    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-    if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
 
-    await cartHandling.deleteProductFromCart(cartId, productId);
+        await cartHandling.deleteProductFromCart(cartId, productId);
 
-    res.send({ status: "success" });
+        res.send({ status: "success" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //Eliminar TODOS los productos de un carrito
 router.delete("/:cid", async (req, res) => {
-    let cartId = req.params.cid;
+    try {
+        let cartId = req.params.cid;
 
-    if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
 
-    await cartHandling.deleteAllProductsFromCart(cartId);
-    res.send({ status: "success" });
+        await cartHandling.deleteAllProductsFromCart(cartId);
+        res.send({ status: "success" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 //Eliminar un carrito, no solo los productos
 router.delete("/deleteCart/:cid", async (req, res) => {
-    let cartId = req.params.cid;
+    try {
+        let cartId = req.params.cid;
 
-    if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
 
-    await cartHandling.deleteCart(cartId);
-    res.send({ status: "success" });
+        await cartHandling.deleteCart(cartId);
+        res.send({ status: "success" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 export default router;

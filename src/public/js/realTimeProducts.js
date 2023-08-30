@@ -58,7 +58,6 @@ socket.on('fetch', async () => {
         let cart = await fetch(`/api/products/?limit=${limit}&page=${page}&sort=${sort}`);
         const data = await cart.json();
         table.innerHTML = convertirAHTML(data);
-        console.log("Se hizo un fetch")
         actualData = data
 
         //Botones de paginacion
@@ -89,7 +88,6 @@ function nextPage() {
 
 // Añadir nuevos productos
 boton.addEventListener("click", () => {
-    console.log("Añadiendo producto...")
     const data = {}
 
     //Obtenemos los valores de los inputs

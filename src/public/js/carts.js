@@ -48,7 +48,6 @@ async function deleteCart() {
     await fetch(`/api/carts/deleteCart/${id}`, {
         method: 'DELETE',
     })
-    console.log("Carrito eliminado")
     window.location = "/carts"
 }
 
@@ -56,7 +55,6 @@ async function deleteProductFromCart(productId) {
     await fetch(`/api/carts/${id}/product/${productId}`, {
         method: 'DELETE',
     })
-    console.log("Producto eliminado del carrito")
     window.location.reload();
 }
 
@@ -64,7 +62,6 @@ async function deleteAllProductsFromCart() {
     await fetch(`/api/carts/${id}`, {
         method: 'DELETE',
     })
-    console.log("Todos los productos han sido eliminados del carrito")
     window.location.reload();
 }
 
@@ -76,7 +73,6 @@ async function checkout() {
 
         if (result.status === 200) {
             const response = await result.json();
-            console.log("Compra realizada satisfactoriamente!");
             window.location = `/ticket/${response._id}`
         } else {
             console.error("Ocurrió un error en el proceso de compra");

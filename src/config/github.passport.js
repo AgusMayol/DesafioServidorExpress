@@ -15,7 +15,6 @@ export const intializePassport = () => {
                 callbackURL: GITHUB_CALLBACK_URL,
             },
             async (accessToken, refreshToken, profile, done) => {
-                console.log(profile)
                 //Como no me provee un email, vamos a hacer que github añada el id en lugar de email.
                 let user = await sessionModel.findOne({ email: profile.id });
                 if (!user) {

@@ -4,26 +4,41 @@ import { productHandling, cartHandling } from "../server.js";
 import { TicketModel } from "../daos/mongodb/models/ticket.model.js";
 
 router.get('/', async (req, res) => {
-    let limit = Number(req.query.limit) || undefined;
-    let page = Number(req.query.page) || undefined;
-    let sort = Number(req.query.sort) || undefined;
-    let queryType = req.query.queryType || undefined;
-    let queryValue = req.query.queryValue || undefined;
+    try {
+        let limit = Number(req.query.limit) || undefined;
+        let page = Number(req.query.page) || undefined;
+        let sort = Number(req.query.sort) || undefined;
+        let queryType = req.query.queryType || undefined;
+        let queryValue = req.query.queryValue || undefined;
 
-    const products = await productHandling.getProducts(limit, page, sort, queryType, queryValue);
-    res.render('home', { title: "Productos", products: products, user: req.session.user });
+        const products = await productHandling.getProducts(limit, page, sort, queryType, queryValue);
+        res.render('home', { title: "Productos", products: products, user: req.session.user });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 })
 
 router.get('/product/:pid', async (req, res) => {
-    const id = req.params.pid;
-    const product = await productHandling.getProductById(id);
+    try {
+        const id = req.params.pid;
+        const product = await productHandling.getProductById(id);
 
-    res.render('product', { title: "Producto", product: product, user: req.session.user });
+        res.render('product', { title: "Producto", product: product, user: req.session.user });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 })
 
 router.get('/carts', async (req, res) => {
-    let carts = await cartHandling.getCarts();
-    res.render('carts', { title: "Carritos", carts: carts, user: req.session.user });
+    try {
+        let carts = await cartHandling.getCarts();
+        res.render('carts', { title: "Carritos", carts: carts, user: req.session.user });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 })
 
 router.get('/realtimeproducts', async (req, res) => {
@@ -59,14 +74,19 @@ router.get('/resetPassword', (req, res) => {
 })
 
 router.get('/ticket/:tid', async (req, res) => {
-    let ticketId = req.params.tid;
+    try {
+        let ticketId = req.params.tid;
 
-    if (!ticketId) {
-        res.redirect('/');
+        if (!ticketId) {
+            res.redirect('/');
+        }
+
+        let ticket = await TicketModel.findOne({ _id: ticketId }).lean();
+        res.render('ticket', { title: "Resumen de compra", user: req.session.user, ticket: ticket })
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
     }
-
-    let ticket = await TicketModel.findOne({ _id: ticketId }).lean();
-    res.render('ticket', { title: "Resumen de compra", user: req.session.user, ticket: ticket })
 })
 
 

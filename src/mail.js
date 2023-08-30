@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { NODEMAILER_ACCOUNT, NODEMAILER_PASSWORD } from "./config.js";
+import { log } from "./config/logger.config.js";
 
 // Configuración del transporte
 const transporter = nodemailer.createTransport({
@@ -21,8 +22,8 @@ export async function sendEmail(to, subject, text) {
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log("Correo electrónico enviado:", info.response);
+        log.info("Correo electrónico enviado:", info.response)
     } catch (error) {
-        console.log("Error al enviar el correo:", error);
+        log.error("Error al enviar el correo:", error)
     }
 }

@@ -1,0 +1,27 @@
+[2023-08-30T23:37:43.735Z] - error: [ERROR TEST] - Success
+[2023-08-30T23:37:43.736Z] - warn: [WARN TEST] - Success
+[2023-08-30T23:37:43.736Z] - error: req.logger.verboose is not a function
+[2023-08-30T23:38:44.204Z] - error: [ERROR TEST] - Success
+[2023-08-30T23:38:44.205Z] - warn: [WARN TEST] - Success
+[2023-08-30T23:38:44.205Z] - error: req.logger.verboose is not a function
+[2023-08-30T23:39:42.314Z] - error: [ERROR TEST] - Success
+[2023-08-30T23:39:42.315Z] - warn: [WARN TEST] - Success
+[2023-08-30T23:44:41.086Z] - info: 🌐 Servidor levantado en el puerto 8080
+[2023-08-30T23:45:06.332Z] - info: 🌐 Servidor levantado en el puerto 8080
+[2023-08-30T23:45:40.537Z] - info: 🌐 Servidor levantado en el puerto 8080
+[2023-08-30T23:45:51.846Z] - http: GET en /api/mocking/loggerTest
+[2023-08-30T23:45:52.013Z] - error: [ERROR TEST] - Success
+[2023-08-30T23:45:52.013Z] - warn: [WARN TEST] - Success
+[2023-08-30T23:45:52.014Z] - info: [INFO TEST] - Success
+[2023-08-30T23:45:52.014Z] - http: [HTTP TEST] - Success
+[2023-08-30T23:45:52.014Z] - debug: [DEBUG TEST] - Success
+2023-08-30T23:47:04.618Z - info: 🌐 Servidor levantado en el puerto 8080
+2023-08-30T23:48:37.135Z - info: 🌐 Servidor levantado en el puerto 8080
+2023-08-30T23:48:46.315Z - http: GET en /api/mocking/loggerTest
+2023-08-30T23:48:46.478Z - error: [ERROR TEST] - Success
+2023-08-30T23:48:46.478Z - error: req.logger.warn is not a function
+2023-08-30T23:48:52.233Z - http: GET en /api/mocking/loggerTest
+2023-08-30T23:48:52.391Z - error: [ERROR TEST] - Success
+2023-08-30T23:48:52.392Z - error: req.logger.warn is not a function
+[2023-08-30T23:49:16.277Z] - error: [ERROR TEST] - Success
+[2023-08-30T23:49:16.278Z] - warn: [WARN TEST] - Success

@@ -1,5 +1,6 @@
 import fs from "fs";
 import { v4 as uuidV4 } from "uuid";
+import { log } from "../../config/logger.config.js";
 
 export default class ProductManager {
     constructor() {
@@ -13,7 +14,7 @@ export default class ProductManager {
             const products = JSON.parse(data);
             return products;
         } catch (error) {
-            console.log("Error al leer el archivo");
+            log.error("Error al leer el archivo")
             return [];
         }
     };
@@ -21,7 +22,7 @@ export default class ProductManager {
     getProducts = async (limit) => {
         this.products = await this.getFile();
         if (this.products.length === 0) {
-            console.log("No hay productos cargados");
+            log.warn("No hay productos cargados")
             return [];
         } else {
             if (limit) {
@@ -36,7 +37,7 @@ export default class ProductManager {
         this.products = await this.getFile();
         const product = this.products.find((product) => product.code === code);
         if (product === undefined) {
-            console.log("Product Not found");
+            log.warn("No se ha encontrado el producto")
             return "Product Not found";
         } else {
             return product;
@@ -47,7 +48,7 @@ export default class ProductManager {
         this.products = await this.getFile();
         const product = this.products.find((product) => product.id === id);
         if (product === undefined) {
-            console.log("Product Not found");
+            log.warn("No se ha encontrado el producto")
             return "Product Not found";
         } else {
             return product;
@@ -72,7 +73,7 @@ export default class ProductManager {
             await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"));
             return info;
         } else {
-            console.log("Necesitas rellenar los campos según su tipo de dato");
+            log.warn("Necesitas rellenar los campos según su tipo de dato")
         }
     };
 
@@ -82,7 +83,7 @@ export default class ProductManager {
 
         const productById = await this.getProductById(id);
         if (productById === "Product Not found") {
-            console.log("Error, no se puede actualizar un producto inexistente");
+            log.warn("Error, no se puede actualizar un producto inexistente")
             return;
         }
 
@@ -115,7 +116,6 @@ export default class ProductManager {
         }
 
         await fs.promises.writeFile(this.path, JSON.stringify(this.products, null, "\t"));
-        console.log("Producto Actualizado");
     };
 
     deleteProduct = async (id) => {
@@ -124,7 +124,7 @@ export default class ProductManager {
 
         const productById = await this.getProductById(id);
         if (productById === "Product Not found") {
-            console.log("Error, no se puede eliminar un producto inexistente");
+            log.warn("Error, no se puede eliminar un producto inexistente.")
             return;
         }
 
@@ -132,6 +132,5 @@ export default class ProductManager {
         this.products.splice(index, 1);
 
         await fs.promises.writeFile(this.path, JSON.stringify(this.products, null, "\t"));
-        console.log("Producto Eliminado");
     };
 }

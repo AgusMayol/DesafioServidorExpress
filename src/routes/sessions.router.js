@@ -46,36 +46,46 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-    if (req.session.user) {
-        req.session.destroy((err) => {
-            if (err) {
-                console.log("Error al destruir la sesión:", err);
-                return res.status(500).send({ status: "error", message: "Error al cerrar sesión" });
-            }
-            return res.send({ status: "success", message: "Sesión cerrada correctamente" });
-        });
-    } else {
-        return res.send({ status: "success", message: "No se encontró sesión activa" });
+    try {
+        if (req.session.user) {
+            req.session.destroy((err) => {
+                if (err) {
+                    log.error("Error al destruir la sesión: ", err)
+                    return res.status(500).send({ status: "error", message: "Error al cerrar sesión" });
+                }
+                return res.send({ status: "success", message: "Sesión cerrada correctamente" });
+            });
+        } else {
+            return res.send({ status: "success", message: "No se encontró sesión activa" });
+        }
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
     }
 });
 
 
 router.post("/restartPassword", async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password)
-        return res.status(400).send({ status: "error", error: "Incomplete Values" });
+    try {
+        const { email, password } = req.body;
+        if (!email || !password)
+            return res.status(400).send({ status: "error", error: "Incomplete Values" });
 
-    const user = await sessionModel.findOne({ email });
+        const user = await sessionModel.findOne({ email });
 
-    if (!user) return res.status(404).send({ status: "error", error: "Not user found" });
+        if (!user) return res.status(404).send({ status: "error", error: "Not user found" });
 
-    const newHashedPassword = createHash(password);
+        const newHashedPassword = createHash(password);
 
-    await sessionModel.updateOne(
-        { _id: user._id },
-        { $set: { password: newHashedPassword } }
-    );
-    res.send({ status: "success", message: "Contraseña restaurada" });
+        await sessionModel.updateOne(
+            { _id: user._id },
+            { $set: { password: newHashedPassword } }
+        );
+        res.send({ status: "success", message: "Contraseña restaurada" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
 });
 
 router.get(
@@ -86,8 +96,6 @@ router.get(
 );
 
 router.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), async (req, res) => {
-    console.log('exito')
-    console.log(req.user)
 
     req.session.user = {
         name: req.user.first_name,

@@ -38,7 +38,6 @@ socket.on('mensajes', (mensajes) => {
 
 // Enviar nuevo mensaje
 boton.addEventListener("click", () => {
-    console.log("Enviando mensaje...")
     const data = {}
 
     //Obtenemos los valores de los inputs

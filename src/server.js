@@ -27,13 +27,16 @@ export const chatHandling = new ChatManager();
 import CartManager from "./daos/mongodb/CartManager.class.js";
 export const cartHandling = new CartManager();
 
+// ---------[OTHERS]--------
 import { SECRET, MONGODB_URL, PORT } from "./config.js";
+import { addLogger, log } from "./config/logger.config.js";
 
 const app = express();
 const connection = mongoose.connect(
   MONGODB_URL,
 );
 
+app.use(addLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
@@ -63,48 +66,40 @@ app.use('/api/sessions/', routerSessions)
 app.use('/api/carts/', routerCart)
 app.use('/api/mocking/', routerMocking)
 
-const expressServer = app.listen(PORT, () => console.log("🌐 Servidor levantado en el puerto 8080"));
+const expressServer = app.listen(PORT, () => log.info("🌐 Servidor levantado en el puerto 8080"));
 const socketServer = new Server(expressServer);
 
 socketServer.on("connection", async (socket) => {
 
-  console.log("・Usuario conectado: " + socket.id);
-
   socket.emit('fetch'); //Hace que el usuario haga un fetch para conseguir el listado de productos
-  socket.emit('mensajes', await chatHandling.getMessages()); //Pendiente: hacerlo en formato de fetch individual.
+  socket.emit('mensajes', await chatHandling.getMessages());
 
   // ---------[REAL TIME PRODUCTS]--------
 
   // Añadimos el producto al archivo
   socket.on('addProduct', async (product) => {
     await productHandling.addProduct(product);
-    console.log("✅ Producto añadido a la base de datos\n")
     socketServer.emit('fetch')
   })
 
   // Eliminamos el producto del archivo
   socket.on('deleteProduct', async (productId) => {
-    console.log(`- ID del producto a eliminar: ${productId}`)
     await productHandling.deleteProduct(productId);
-    console.log("✅ Producto eliminado de la base de datos\n")
     socketServer.emit('fetch')
   })
 
   // ---------[CHAT]--------
 
-  // Añadimos el producto al archivo
+  // Añadimos el mensaje a la db
   socket.on('addMessage', async (message) => {
     await chatHandling.addMessage(message);
-    console.log("✅ Mensaje guardado en la base de datos\n")
-    socketServer.emit('mensajes', await chatHandling.getMessages()); //Pendiente: hacerlo en formato de fetch individual.
+    socketServer.emit('mensajes', await chatHandling.getMessages());
   })
 
-  // Eliminamos el producto del archivo
+  // Eliminamos el mensaje de la db
   socket.on('deleteMessage', async (messageId) => {
-    console.log(`- ID del mensaje a eliminar: ${messageId}`)
     await chatHandling.deleteMessage(messageId);
-    console.log("✅ Mensaje eliminado de la base de datos\n")
-    socketServer.emit('mensajes', await chatHandling.getMessages()); //Pendiente: hacerlo en formato de fetch individual.
+    socketServer.emit('mensajes', await chatHandling.getMessages());
   })
 
 });
