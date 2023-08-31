@@ -2,6 +2,7 @@ import { Router } from "express";
 const router = Router();
 import { faker } from '@faker-js/faker';
 import { sendEmail } from "../mail.js";
+import errors from "../errors.json" assert { type: 'json' };
 //GET
 
 //Crear productos con Faker.js
@@ -9,8 +10,8 @@ router.get("/mockingproducts", async (req, res) => {
     try {
         let limit = Number(req.query.limit) || 100;
 
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         let products = [];
 
@@ -38,8 +39,8 @@ router.get("/mockingproducts", async (req, res) => {
 
 router.get("/sendmail", async (req, res) => {
     try {
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         sendEmail("agusmayolitos@gmail.com", "[TEST] Thanks for your purchase!", `you have purchased <number> items in our store!`)
 
@@ -53,8 +54,8 @@ router.get("/sendmail", async (req, res) => {
 
 router.get("/loggerTest", (req, res) => {
     try {
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         req.logger.error('[ERROR TEST] - Success');
         req.logger.warn('[WARN TEST] - Success');

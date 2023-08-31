@@ -1,0 +1,5 @@
+{
+    "login": { "status": "error", "message": "Unauthorized, please log in." },
+    "lowPerms": { "status": "error", "message": "Unauthorized, you must be an admin." },
+    "notYourAccount": { "status": "error", "message": "Unauthorized, this is not your account." }
+}

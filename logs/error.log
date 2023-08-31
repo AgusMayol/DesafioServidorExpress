@@ -25,3 +25,6 @@
 2023-08-30T23:48:52.392Z - error: req.logger.warn is not a function
 [2023-08-30T23:49:16.277Z] - error: [ERROR TEST] - Success
 [2023-08-30T23:49:16.278Z] - warn: [WARN TEST] - Success
+[2023-08-30T23:58:55.977Z] - error: [ERROR TEST] - Success
+[2023-08-30T23:58:55.977Z] - warn: [WARN TEST] - Success
+[2023-08-30T23:59:16.689Z] - error: res is not defined

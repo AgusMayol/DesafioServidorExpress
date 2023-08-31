@@ -73,7 +73,7 @@ router.post("/restartPassword", async (req, res) => {
 
         const user = await sessionModel.findOne({ email });
 
-        if (!user) return res.status(404).send({ status: "error", error: "Not user found" });
+        if (!user) return res.status(404).send({ status: "error", error: "User not found" });
 
         const newHashedPassword = createHash(password);
 
@@ -108,7 +108,7 @@ router.get('/githubcallback', passport.authenticate('github', { failureRedirect:
 })
 
 router.get("/current", async (req, res) => {
-    if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized" });
+    if (!req.session.user) return res.status(401).send(errors.login);
     res.send(req.session.user);
 }
 );

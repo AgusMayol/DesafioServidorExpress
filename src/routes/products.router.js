@@ -1,5 +1,6 @@
 import { Router } from "express";
 import ProductManager from "../daos/mongodb/ProductsManager.class.js";
+import errors from "../errors.json" assert { type: 'json' };
 
 const router = Router();
 
@@ -35,8 +36,7 @@ router.get("/:pid", async (req, res) => {
         const product = await productHandling.getProductById(id);
 
         if (!product) {
-            res.send("No se encontró el producto");
-            return;
+            return res.send("No se encontró el producto");
         }
 
         res.send(product);
@@ -54,8 +54,8 @@ router.put("/:pid", async (req, res) => {
         const id = req.params.pid;
         const data = req.body;
 
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         productHandling.updateProduct(id, data);
         res.send({ status: "success" });
@@ -72,8 +72,8 @@ router.delete("/:pid", async (req, res) => {
     try {
         const id = req.params.pid;
 
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         productHandling.deleteProduct(id);
         res.send({ status: "success" });
@@ -90,8 +90,8 @@ router.post("/", async (req, res) => {
     try {
         const product = req.body;
 
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, you must be an admin." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         productHandling.addProduct(product);
         res.send({ status: "success" });

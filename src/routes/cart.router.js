@@ -4,6 +4,7 @@ import ProductManager from "../daos/mongodb/ProductsManager.class.js";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { TicketModel } from "../daos/mongodb/models/ticket.model.js";
 import { sendEmail } from "../mail.js";
+import errors from "../errors.json" assert { type: 'json' };
 
 const router = Router();
 
@@ -56,8 +57,8 @@ router.post("/:cid/products/:pid", async (req, res) => {
         const productId = req.params.pid;
         const quantity = req.query.quantity || undefined;
 
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send(errors.notYourAccount);
 
         await cartHandling.addProductToCart(cartId, productId, quantity);
         res.send({ status: "success" });
@@ -73,8 +74,8 @@ router.post("/:cid", async (req, res) => {
         const cartId = req.params.cid;
         const products = req.query.products || undefined;
 
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send(errors.notYourAccount);
 
         await cartHandling.replaceProducts(cartId, products);
         res.send({ status: "success" });
@@ -163,8 +164,8 @@ router.delete("/:cid/product/:pid", async (req, res) => {
         let cartId = req.params.cid;
         let productId = req.params.pid;
 
-        if (!req.session.user) return res.status(401).send({ status: "error", message: "Unauthorized, please log in." });
-        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send(errors.notYourAccount);
 
         await cartHandling.deleteProductFromCart(cartId, productId);
 
@@ -180,7 +181,8 @@ router.delete("/:cid", async (req, res) => {
     try {
         let cartId = req.params.cid;
 
-        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send(errors.notYourAccount);
 
         await cartHandling.deleteAllProductsFromCart(cartId);
         res.send({ status: "success" });
@@ -195,7 +197,8 @@ router.delete("/deleteCart/:cid", async (req, res) => {
     try {
         let cartId = req.params.cid;
 
-        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send({ status: "error", message: "Unauthorized, this is not your account." });
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send(errors.notYourAccount);
 
         await cartHandling.deleteCart(cartId);
         res.send({ status: "success" });
