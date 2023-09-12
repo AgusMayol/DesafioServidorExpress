@@ -28,3 +28,13 @@
 [2023-08-30T23:58:55.977Z] - error: [ERROR TEST] - Success
 [2023-08-30T23:58:55.977Z] - warn: [WARN TEST] - Success
 [2023-08-30T23:59:16.689Z] - error: res is not defined
+[2023-09-11T23:41:36.136Z] - error: Cannot set headers after they are sent to the client
+[2023-09-11T23:44:08.032Z] - error: Error al enviar el correo: Invalid login: 534-5.7.9 Application-specific password required. Learn more at
+534 5.7.9  https://support.google.com/mail/?p=InvalidSecondFactor f15-20020a9d6c0f000000b006bf0f95f702sm3537664otq.64 - gsmtp
+[2023-09-11T23:48:52.685Z] - error: Error al enviar el correo: Invalid login: 535-5.7.8 Username and Password not accepted. Learn more at
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials t5-20020a05687044c500b001b3d67934e9sm4570312oai.26 - gsmtp
+[2023-09-11T23:49:39.647Z] - error: Error al enviar el correo: Invalid login: 535-5.7.8 Username and Password not accepted. Learn more at
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials y22-20020a056830109600b006b74bea76c0sm3651607oto.47 - gsmtp
+[2023-09-11T23:53:35.507Z] - error: Error al enviar el correo: Invalid login: 535-5.7.8 Username and Password not accepted. Learn more at
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials f3-20020a4ab003000000b00562f3936c01sm3395383oon.45 - gsmtp
+[2023-09-12T00:35:08.467Z] - error: Cast to ObjectId failed for value "[object HTMLInputElement]" (type string) at path "_id" for model "resetPassword"

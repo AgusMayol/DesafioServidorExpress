@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
-import passport from "passport";
 import { createHash, isValidPassword } from "../utils.js";
+import { resetPasswordModel } from "../daos/mongodb/models/resetPassword.model.js";
+import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { cartModel } from "../daos/mongodb/models/carts.model.js";
+import { sendEmail } from "../mail.js";
+import { PORT } from "../config.js";
+import errors from "../errors.json" assert { type: 'json' };
+import passport from "passport";
 
 const router = Router();
 
@@ -64,12 +68,34 @@ router.get("/logout", (req, res) => {
     }
 });
 
-
-router.post("/restartPassword", async (req, res) => {
+router.get("/requestRestartPassword/:email", async (req, res) => {
+    console.log("Request initiated")
     try {
+        const email = req.params.email;
+        if (!email) return res.status(400).send({ status: "error", error: "Incomplete Values" });
+
+        const user = await sessionModel.findOne({ email });
+        console.log(user)
+        if (!user) return res.send({ status: "success" }); //Sin codigo de error, cancelamos la operación discretamente.
+
+        let resetPassword = await resetPasswordModel.create({ userID: user._id, isValid: true });
+        console.log(resetPassword)
+
+        sendEmail(email, "Password reset", `Hello ${user.first_name}, follow the link below to recover your password.`, `<a href="http://localhost:${PORT}/resetPassword/${user._id}/${resetPassword._id}/${resetPassword.code}">Reset password</a>`)
+
+        res.send({ status: "success", message: "Password reset sent successfully to your email" });
+
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
+});
+
+router.post("/restartPassword/:rpid", async (req, res) => {
+    try {
+        let resetPasswordId = req.params.rpid;
         const { email, password } = req.body;
-        if (!email || !password)
-            return res.status(400).send({ status: "error", error: "Incomplete Values" });
+        if (!email || !password) return res.status(400).send({ status: "error", error: "Incomplete Values" });
 
         const user = await sessionModel.findOne({ email });
 
@@ -77,11 +103,42 @@ router.post("/restartPassword", async (req, res) => {
 
         const newHashedPassword = createHash(password);
 
+        if (newHashedPassword == user.password) return res.status(400).send({ status: "error", error: "Password cannot be the same" });
+
         await sessionModel.updateOne(
             { _id: user._id },
             { $set: { password: newHashedPassword } }
         );
+
+        await resetPasswordModel.deleteOne({ _id: resetPasswordId });
+
         res.send({ status: "success", message: "Contraseña restaurada" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
+});
+
+router.post("/premium/:uid", async (req, res) => {
+    try {
+        const id = req.params.uid;
+
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
+
+        const user = await sessionModel.findOne({ _id: id });
+
+        if (!user) return res.status(404).send({ status: "error", error: "User not found" });
+
+        if (user.premium) {
+            user.premium = false;
+        } else {
+            user.premium = true;
+        }
+
+        user.save();
+
+        res.send({ status: "success", message: "Usuario actualizado" });
     } catch (error) {
         req.logger.error(error);
         return res.send(error);

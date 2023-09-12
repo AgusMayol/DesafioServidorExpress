@@ -1,7 +1,10 @@
 import { Router } from "express";
 const router = Router();
 import { productHandling, cartHandling } from "../server.js";
+import { resetPasswordModel } from "../daos/mongodb/models/resetPassword.model.js";
 import { TicketModel } from "../daos/mongodb/models/ticket.model.js";
+import errors from "../errors.json" assert { type: 'json' };
+import moment from 'moment';
 
 router.get('/', async (req, res) => {
     try {
@@ -47,9 +50,7 @@ router.get('/realtimeproducts', async (req, res) => {
 
     let nivel = req.session.user.level || 0;
 
-    if (nivel < 1) {
-        return res.status(401).send({ status: "unauthorized", message: "No tienes permisos suficientes" });
-    }
+    if (nivel < 1 || req.session.user.premium == false) return res.status(401).send(errors.lowPerms);
 
     res.render('realTimeProducts', { title: "Productos en Tiempo Real", user: req.session.user })
 });
@@ -69,7 +70,30 @@ router.get('/login', (req, res) => {
     res.render('login');
 })
 
-router.get('/resetPassword', (req, res) => {
+router.get('/requestRestartPassword', (req, res) => {
+    res.render('requestRestartPassword');
+})
+
+router.get('/resetPassword/:uid/:rpid/:code', async (req, res) => {
+    let userId = req.params.uid;
+    let resetPasswordId = req.params.rpid;
+    let code = req.params.code;
+
+    let requestRestartPassword = await resetPasswordModel.findOne({ _id: resetPasswordId, userID: userId, code: code });
+    if (!requestRestartPassword) return res.redirect('/requestRestartPassword');
+
+
+    // Obtener la fecha actual
+    const currentTime = moment();
+    const createdAt = moment(requestRestartPassword.createdAt);
+
+    // Calcular la diferencia en horas entre la fecha actual y la fecha de creación
+    const hoursDifference = currentTime.diff(createdAt, 'hours');
+
+    if (hoursDifference >= 1) {
+        return res.redirect('/requestRestartPassword');
+    }
+
     res.render('resetPassword');
 })
 

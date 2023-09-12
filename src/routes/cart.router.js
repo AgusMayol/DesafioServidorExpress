@@ -60,6 +60,14 @@ router.post("/:cid/products/:pid", async (req, res) => {
         if (!req.session.user) return res.status(401).send(errors.login);
         if (req.session.user.cartId != cartId && req.session.user.level < 1) return res.status(401).send(errors.notYourAccount);
 
+        const product = await productHandling.getProductById(productId);
+
+        if (!product) return res.status(404).send({ status: "error", message: "Product not found" });
+
+        if (product.owner == req.session.user._id) {
+            return res.status(401).send({ status: "error", message: "Unauthorized, you cannot add your own product to the cart." });
+        }
+
         await cartHandling.addProductToCart(cartId, productId, quantity);
         res.send({ status: "success" });
     } catch (error) {
