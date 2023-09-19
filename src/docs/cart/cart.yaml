@@ -1,0 +1,171 @@
+paths:
+  /api/cart/:
+    get:
+      summary: Obtiene todos los carritos
+      tags:
+        - Cart
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Limite de resultados obtenidos en la consulta. por defecto, todos.
+      responses:
+        "200":
+          description: Carritos obtenidos satisfactoriamente
+        "500":
+          description: Fallo interno del servidor
+
+  /api/cart/{cid}:
+    get:
+      summary: Obtiene un carrito por su ID
+      tags:
+        - Cart
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito que se desea obtener.
+      responses:
+        "200":
+          description: Carrito obtenido satisfactoriamente
+        "500":
+          description: Fallo interno del servidor
+
+    post:
+      summary: Crea un carrito
+      tags:
+        - Cart
+      responses:
+        "200":
+          description: Carrito creado satisfactoriamente
+        "500":
+          description: Fallo interno del servidor
+
+    delete:
+      summary: Elimina un carrito
+      tags:
+        - Cart
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito que se desea eliminar.
+      responses:
+        "200":
+          description: Carrito eliminado satisfactoriamente
+        "500":
+          description: Fallo interno del servidor
+
+  /api/cart/{cid}/products/{pid}:
+    post:
+      summary: Añade un producto al carrito
+      tags:
+        - Cart
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito al que se desea agregar el producto.
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID del producto que se desea agregar al carrito.
+        - in: query
+          name: quantity
+          schema:
+            type: integer
+          description: Cantidad del producto a agregar al carrito. Por defecto, 1.
+      responses:
+        "200":
+          description: Producto añadido al carrito satisfactoriamente
+        "401":
+          description: No autorizado para agregar producto al carrito
+        "404":
+          description: Producto no encontrado
+        "500":
+          description: Fallo interno del servidor
+
+    delete:
+      summary: Elimina un producto del carrito
+      tags:
+        - Cart
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito del que se desea eliminar el producto.
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID del producto que se desea eliminar del carrito.
+      responses:
+        "200":
+          description: Producto eliminado del carrito satisfactoriamente
+        "401":
+          description: No autorizado para eliminar producto del carrito
+        "500":
+          description: Fallo interno del servidor
+
+  /api/cart/{cid}/productQuantity/{pid}:
+    post:
+      summary: Cambia la cantidad de un producto en el carrito
+      tags:
+        - Cart
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito en el que se desea cambiar la cantidad del producto.
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: ID del producto cuya cantidad se desea cambiar.
+        - in: query
+          name: quantity
+          schema:
+            type: integer
+          description: Nueva cantidad del producto en el carrito.
+      responses:
+        "200":
+          description: Cantidad de producto en el carrito actualizada satisfactoriamente
+        "401":
+          description: No autorizado para cambiar la cantidad del producto en el carrito
+        "500":
+          description: Fallo interno del servidor
+
+  /api/cart/{cid}/purchase:
+    post:
+      summary: Crea un ticket de compra a partir del carrito
+      tags:
+        - Cart
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito del que se desea crear el ticket de compra.
+      responses:
+        "200":
+          description: Ticket de compra creado satisfactoriamente
+        "401":
+          description: No autorizado para crear el ticket de compra
+        "500":
+          description: Fallo interno del servidor

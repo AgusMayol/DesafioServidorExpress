@@ -28,14 +28,18 @@ import CartManager from "./daos/mongodb/CartManager.class.js";
 export const cartHandling = new CartManager();
 
 // ---------[OTHERS]--------
-import { SECRET, MONGODB_URL, PORT } from "./config.js";
+import { SECRET, MONGODB_URL, PORT, SwaggerOptions } from "./config.js";
 import { addLogger, log } from "./config/logger.config.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 const app = express();
 const connection = mongoose.connect(
   MONGODB_URL,
 );
 
+const specs = swaggerJSDoc(SwaggerOptions)
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 app.use(addLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
