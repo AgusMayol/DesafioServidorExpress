@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
         password,
         cartId
     });
-    res.send({ status: "success", message: "usuario  registrado" });
+    res.send({ status: "success", message: "usuario  registrado", payload: result._id });
 });
 
 router.post("/login", async (req, res) => {
@@ -43,7 +43,8 @@ router.post("/login", async (req, res) => {
         email: user.email,
         age: user.age,
         level: user.level,
-        cartId: user.cartId
+        cartId: user.cartId,
+        userId: user._id
     }
 
     res.send({ status: "success", message: req.session.user });
@@ -64,6 +65,31 @@ router.get("/logout", (req, res) => {
         }
     } catch (error) {
         req.logger.error(error);
+        return res.send(error);
+    }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+    try {
+        let userID = req.params.id;
+        if (req.session.user.userId == userID) {
+            req.session.destroy(async (err) => {
+                if (err) {
+                    log.error("Error al destruir la sesión: ", err)
+                    return res.status(500).send({ status: "error", message: "Error al cerrar sesión" });
+                }
+
+                let result = await sessionModel.deleteOne({ _id: userID });
+                return res.send({ status: "success", message: "Sesión cerrada y usuario eliminado correctamente", payload: result });
+            });
+        }
+
+        else {
+            return res.send({ status: "error", message: "No se encontró sesión activa" });
+        }
+    } catch (error) {
+        req.logger.error(error);
+        console.log("Error encontrado")
         return res.send(error);
     }
 });
