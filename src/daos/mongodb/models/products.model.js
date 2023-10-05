@@ -32,7 +32,17 @@ const ProductsSchema = new mongoose.Schema({
         type: String,
         required: true,
         default: "admin"
-    }
+    },
+    photos: [
+        {
+            name: {
+                type: String,
+            },
+            reference: {
+                type: String,
+            },
+        },
+    ],
 })
 
 ProductsSchema.plugin(mongoosePaginate)

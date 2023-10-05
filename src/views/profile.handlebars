@@ -1,0 +1,38 @@
+<div class="p-8 mx-auto w-full flex flex-col items-center justify-center gap-4">
+    <h2 class="font-extrabold text-2xl text-center">Login</h2>
+    
+    <form action="/api/sessions/{{user.userId}}/documents" enctype="multipart/form-data" method="post" class="w-72 flex flex-col items-center gap-4">
+
+        <div class="w-full">
+            <label for="archivos" class="block text-sm font-medium leading-6 text-gray-900">Archivos</label>
+            <div class="relative mt-2 rounded-md shadow-sm w-full">
+                <input type="file" name="archivos" id="archivos"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" multiple>
+            </div>
+        </div>
+
+        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 
+        text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline 
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Subir archivos
+        </button>
+    </form>
+
+    <form action="/api/sessions/{{user.userId}}/profiles" enctype="multipart/form-data" method="post" class="w-72 flex flex-col items-center gap-4">
+
+        <div class="w-full">
+            <label for="avatar" class="block text-sm font-medium leading-6 text-gray-900">Avatar</label>
+            <div class="relative mt-2 rounded-md shadow-sm w-full">
+                <input type="file" name="avatar" id="avatar" accept="image/png, image/jpeg, image/webp, image/jpg"
+                    class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            </div>
+        </div>
+
+        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 
+        text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline 
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Subir avatar
+        </button>
+    </form>
+</div>
+<script src="/js/sessions/login.js"></script>

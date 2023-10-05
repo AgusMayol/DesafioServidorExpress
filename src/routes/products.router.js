@@ -1,6 +1,23 @@
 import { Router } from "express";
+import __dirname from "../utils.js";
 import ProductManager from "../daos/mongodb/ProductsManager.class.js";
 import errors from "../errors.json" assert { type: 'json' };
+import multer from "multer";
+import { v4 } from 'uuid';
+
+const products = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, `${__dirname}/uploads/products`);
+    },
+    filename: (req, file, cb) => {
+        const randomUuid = v4();
+        const fileName = randomUuid + file.originalname;
+
+        cb(null, fileName);
+    }
+});
+
+const uploadProducts = multer({ storage: products });
 
 const router = Router();
 
@@ -105,6 +122,38 @@ router.post("/", async (req, res) => {
 
         productHandling.addProduct(product);
         res.send({ status: "success" });
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
+});
+
+router.post("/:pid/product/upload", uploadProducts.array('photos', 5), async (req, res) => {
+    try {
+        const pid = req.params.pid;
+
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
+
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).send('No se ha seleccionado ningún archivo.');
+        }
+
+        const product = await productHandling.getProductById(pid);
+
+        if (!product) return res.status(404).send({ status: "error", message: "Product not found" });
+
+        const photos = [];
+
+        for (const file of req.files) {
+            const archivo = { name: file.filename, reference: file.path }
+            photos.push(archivo);
+        }
+
+        const result = await productHandling.updateProduct(pid, { photos });
+        if (!result) return res.status(500).send({ status: "error", message: "Error al actualizar el producto" });
+
+        res.status(200).send('Se han subido los archivos correctamente.');
     } catch (error) {
         req.logger.error(error);
         return res.send(error);

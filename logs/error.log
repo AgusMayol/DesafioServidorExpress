@@ -1,0 +1,7 @@
+[2023-10-05T00:39:28.755Z] - error: Cannot set properties of null (setting 'last_connection')
+[2023-10-05T00:40:18.423Z] - error: Cannot set properties of null (setting 'last_connection')
+[2023-10-05T00:42:12.250Z] - error: Cannot set properties of null (setting 'last_connection')
+[2023-10-05T00:44:23.015Z] - error: Cannot set properties of null (setting 'last_connection')
+[2023-10-05T00:48:10.349Z] - error: Cannot read properties of undefined (reading 'filename')
+[2023-10-05T01:26:51.199Z] - error: Cannot set properties of null (setting 'last_connection')
+[2023-10-05T01:29:32.042Z] - error: Cannot read properties of null (reading '_id')

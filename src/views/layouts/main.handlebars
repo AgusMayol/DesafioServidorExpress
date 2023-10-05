@@ -24,6 +24,9 @@
             <a href="/realtimeproducts" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">RealTimeProducts</a>
             <a href="/carts" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Carts</a>
             <a href="/chat" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Chat</a>
+            {{#if user.name}}
+            <a href="/profile" class="hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium text-blue-300">Mi perfil</a>
+            {{/if}}
           </div>
         </div>
       </div>

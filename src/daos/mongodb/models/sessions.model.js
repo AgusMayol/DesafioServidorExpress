@@ -37,6 +37,28 @@ const SessionSchema = new mongoose.Schema({
     cartId: {
         type: String,
         required: true,
+    },
+    documents: [
+        {
+            name: {
+                type: String,
+            },
+            reference: {
+                type: String,
+            },
+        },
+    ],
+    documentsUploaded: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    last_connection: {
+        type: String,
+        required: true
+    },
+    avatar: {
+        type: String
     }
 })
 

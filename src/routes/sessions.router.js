@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createHash, isValidPassword } from "../utils.js";
+import __dirname, { createHash, isValidPassword, currentDate } from "../utils.js";
 import { resetPasswordModel } from "../daos/mongodb/models/resetPassword.model.js";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { cartModel } from "../daos/mongodb/models/carts.model.js";
@@ -7,6 +7,35 @@ import { sendEmail } from "../mail.js";
 import { PORT } from "../config.js";
 import errors from "../errors.json" assert { type: 'json' };
 import passport from "passport";
+import multer from "multer";
+import { v4 } from 'uuid';
+
+const documents = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, `${__dirname}/uploads/documents`);
+    },
+    filename: (req, file, cb) => {
+        const randomUuid = v4();
+        const fileName = randomUuid + file.originalname;
+
+        cb(null, fileName);
+    }
+});
+
+const profiles = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, `${__dirname}/uploads/profiles`);
+    },
+    filename: (req, file, cb) => {
+        const randomUuid = v4();
+        const fileName = randomUuid + file.originalname;
+
+        cb(null, fileName);
+    }
+});
+
+const uploadDocuments = multer({ storage: documents });
+const uploadProfiles = multer({ storage: profiles });
 
 const router = Router();
 
@@ -29,7 +58,7 @@ router.post("/register", async (req, res) => {
         password,
         cartId
     });
-    res.send({ status: "success", message: "usuario  registrado", payload: result._id });
+    res.send({ status: "success", message: "usuario registrado", payload: result._id });
 });
 
 router.post("/login", async (req, res) => {
@@ -37,6 +66,8 @@ router.post("/login", async (req, res) => {
     const user = await sessionModel.findOne({ email: email });
     if (!user) return res.redirect('/login')
     if (!isValidPassword(password, user.password)) return res.redirect('/login')
+
+    const result = await sessionModel.updateOne({ email: email }, { $set: { last_connection: currentDate() } });
 
     req.session.user = {
         name: user.first_name + " " + user.last_name,
@@ -50,9 +81,13 @@ router.post("/login", async (req, res) => {
     res.send({ status: "success", message: req.session.user });
 });
 
-router.get("/logout", (req, res) => {
+router.get("/logout", async (req, res) => {
     try {
         if (req.session.user) {
+
+            const user = await sessionModel.findOne({ _id: req.session.UserId });
+            const result = await sessionModel.updateOne({ _id: req.session.UserId }, { $set: { last_connection: currentDate() } });
+
             req.session.destroy((err) => {
                 if (err) {
                     log.error("Error al destruir la sesión: ", err)
@@ -89,23 +124,19 @@ router.delete("/delete/:id", async (req, res) => {
         }
     } catch (error) {
         req.logger.error(error);
-        console.log("Error encontrado")
         return res.send(error);
     }
 });
 
 router.get("/requestRestartPassword/:email", async (req, res) => {
-    console.log("Request initiated")
     try {
         const email = req.params.email;
         if (!email) return res.status(400).send({ status: "error", error: "Incomplete Values" });
 
         const user = await sessionModel.findOne({ email });
-        console.log(user)
         if (!user) return res.send({ status: "success" }); //Sin codigo de error, cancelamos la operación discretamente.
 
         let resetPassword = await resetPasswordModel.create({ userID: user._id, isValid: true });
-        console.log(resetPassword)
 
         sendEmail(email, "Password reset", `Hello ${user.first_name}, follow the link below to recover your password.`, `<a href="http://localhost:${PORT}/resetPassword/${user._id}/${resetPassword._id}/${resetPassword.code}">Reset password</a>`)
 
@@ -159,6 +190,7 @@ router.post("/premium/:uid", async (req, res) => {
         if (user.premium) {
             user.premium = false;
         } else {
+            if (user.documentsUploaded < 3) return res.status(400).send({ status: "error", error: "No se han subido los documentos necesarios para ser usuario premuim" });
             user.premium = true;
         }
 
@@ -170,6 +202,66 @@ router.post("/premium/:uid", async (req, res) => {
         return res.send(error);
     }
 });
+
+router.post("/:uid/documents", uploadDocuments.array('archivos', 3), async (req, res) => {
+    try {
+        const id = req.params.uid;
+
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
+
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).send('No se ha seleccionado ningún archivo.');
+        }
+
+        if (req.files.length > 3) {
+            return res.status(400).send('Se ha superado la cantidad máxima de archivos permitidos');
+        }
+
+        const user = await sessionModel.findOne({ _id: id });
+
+        if (!user) return res.status(404).send({ status: "error", error: "User not found" });
+
+        user.documentsUploaded = req.files.length + user.documentsUploaded;
+
+        for (const file of req.files) {
+            const archivo = { name: file.filename, reference: file.path }
+            user.documents.push(archivo);
+        }
+        user.save();
+
+        res.status(200).send('Se han subido los archivos correctamente.');
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
+});
+
+router.post("/:uid/profiles", uploadProfiles.single('avatar'), async (req, res) => {
+    try {
+        const id = req.params.uid;
+
+        if (!req.session.user) return res.status(401).send(errors.login);
+        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
+
+        if (!req.file || req.file.length === 0) {
+            return res.status(400).send('No se ha seleccionado ningún archivo.');
+        }
+
+        const user = await sessionModel.findOne({ _id: id });
+
+        if (!user) return res.status(404).send({ status: "error", error: "User not found" });
+
+        user.avatar = req.file.filename;
+        user.save();
+
+        res.status(200).send('Se han subido los archivos correctamente.');
+    } catch (error) {
+        req.logger.error(error);
+        return res.send(error);
+    }
+});
+
 
 router.get(
     "/github",

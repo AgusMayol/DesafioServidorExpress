@@ -70,6 +70,11 @@ router.get('/login', (req, res) => {
     res.render('login');
 })
 
+router.get('/profile', (req, res) => {
+    if (!req.session.user) return res.redirect('/login');
+    res.render('profile', { title: "My Profile", user: req.session.user });
+})
+
 router.get('/requestRestartPassword', (req, res) => {
     res.render('requestRestartPassword');
 })
