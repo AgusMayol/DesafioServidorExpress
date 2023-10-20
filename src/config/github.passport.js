@@ -1,6 +1,7 @@
 import passport from "passport";
 import GithubStrategy from "passport-github2";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
+import { cartModel } from "../daos/mongodb/models/carts.model.js";
 import { createHash, currentDate } from "../utils.js";
 import { v4 } from 'uuid';
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK_URL, URL } from "../config.js";
