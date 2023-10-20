@@ -4,6 +4,7 @@ import ProductManager from "../daos/mongodb/ProductsManager.class.js";
 import errors from "../errors.json" assert { type: 'json' };
 import multer from "multer";
 import { v4 } from 'uuid';
+import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 
 const products = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -76,7 +77,7 @@ router.put("/:pid", async (req, res) => {
         if (!product) return res.status(404).send({ status: "error", message: "Product not found" });
 
         if (!req.session.user) return res.status(401).send(errors.login);
-        if (req.session.user.level < 1 || product.owner != req.session.user._id) return res.status(401).send(errors.lowPerms);
+        if (req.session.user.level < 1 || product.owner != req.session.user.userId) return res.status(401).send(errors.lowPerms);
 
         productHandling.updateProduct(id, data);
         res.send({ status: "success" });
@@ -98,7 +99,15 @@ router.delete("/:pid", async (req, res) => {
         if (!product) return res.status(404).send({ status: "error", message: "Product not found" });
 
         if (!req.session.user) return res.status(401).send(errors.login);
-        if (req.session.user.level < 1 || product.owner != req.session.user._id) return res.status(401).send(errors.lowPerms);
+        if (req.session.user.level < 1 || product.owner != req.session.user.userId) return res.status(401).send(errors.lowPerms);
+
+        if (product.owner != "admin") {
+            let owner = await sessionModel.findOne({ _id: product.owner });
+
+            if (owner.premium) {
+                sendEmail(owner.email, "Someone has deleted one of your products", `Hello ${user.first_name}, someone has deleted your product: ${product.title}.`,)
+            }
+        }
 
         productHandling.deleteProduct(id);
         res.send({ status: "success" });
@@ -118,7 +127,7 @@ router.post("/", async (req, res) => {
         if (!req.session.user) return res.status(401).send(errors.login);
         if (req.session.user.level < 1 || req.session.user.premium != true) return res.status(401).send(errors.lowPerms);
 
-        product.owner = req.session.user._id;
+        product.owner = req.session.user.userId;
 
         productHandling.addProduct(product);
         res.send({ status: "success" });

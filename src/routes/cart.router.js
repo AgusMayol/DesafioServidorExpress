@@ -64,7 +64,7 @@ router.post("/:cid/products/:pid", async (req, res) => {
 
         if (!product) return res.status(404).send({ status: "error", message: "Product not found" });
 
-        if (product.owner == req.session.user._id) {
+        if (product.owner == req.session.user.userId && product.owner != "admin") {
             return res.status(401).send({ status: "error", message: "Unauthorized, you cannot add your own product to the cart." });
         }
 

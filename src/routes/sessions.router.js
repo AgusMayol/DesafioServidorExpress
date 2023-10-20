@@ -39,6 +39,35 @@ const uploadProfiles = multer({ storage: profiles });
 
 const router = Router();
 
+router.get("/", async (req, res) => {
+    if (!req.session.user) return res.status(401).send(errors.login);
+    if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
+
+    const result = await sessionModel.find({}).select('-password');
+
+    res.send(result);
+});
+
+router.delete("/", async (req, res) => {
+    if (!req.session.user) return res.status(401).send(errors.login);
+    if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
+
+    const users = await sessionModel.find({ last_connection: { $lt: currentDate() } }).select('-password');
+    let fechaActual = currentDate().substring(8, 10);
+
+    let usuariosEliminados = [];
+
+    for (const user of users) {
+        let ultimaConexion = user.last_connection.substring(8, 10)
+        if ((fechaActual - ultimaConexion) > 2)
+            await sessionModel.deleteOne({ _id: user._id });
+        sendEmail(user.email, "Your account has been deleted", `Hello ${user.first_name}, your account has been removed from our e-commerce because inactivity. If you would like to recover it, please create a new one`, `<a href="http://localhost:${PORT}/register">here</a>`)
+        usuariosEliminados.push(user);
+    }
+
+    res.send({ status: "success", message: "Usuarios eliminados y notificados", payload: usuariosEliminados });
+});
+
 router.post("/register", async (req, res) => {
     let { first_name, last_name, email, age, password } = req.body;
     const exist = await sessionModel.findOne({ email });
@@ -56,7 +85,8 @@ router.post("/register", async (req, res) => {
         email,
         age,
         password,
-        cartId
+        cartId,
+        last_connection: currentDate()
     });
     res.send({ status: "success", message: "usuario registrado", payload: result._id });
 });
@@ -208,7 +238,6 @@ router.post("/:uid/documents", uploadDocuments.array('archivos', 3), async (req,
         const id = req.params.uid;
 
         if (!req.session.user) return res.status(401).send(errors.login);
-        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         if (!req.files || req.files.length === 0) {
             return res.status(400).send('No se ha seleccionado ningún archivo.');
@@ -242,7 +271,6 @@ router.post("/:uid/profiles", uploadProfiles.single('avatar'), async (req, res) 
         const id = req.params.uid;
 
         if (!req.session.user) return res.status(401).send(errors.login);
-        if (req.session.user.level < 1) return res.status(401).send(errors.lowPerms);
 
         if (!req.file || req.file.length === 0) {
             return res.status(400).send('No se ha seleccionado ningún archivo.');
