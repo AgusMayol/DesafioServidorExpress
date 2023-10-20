@@ -1,7 +1,7 @@
 import passport from "passport";
 import GithubStrategy from "passport-github2";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
-import { createHash } from "../utils.js";
+import { createHash, currentDate } from "../utils.js";
 import { v4 } from 'uuid';
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK_URL, URL } from "../config.js";
 
@@ -17,6 +17,9 @@ export const intializePassport = () => {
             async (accessToken, refreshToken, profile, done) => {
                 //Como no me provee un email, vamos a hacer que github añada el id en lugar de email.
                 let user = await sessionModel.findOne({ email: profile.id });
+
+                let response = await cartModel.create({ products: [] });
+                let cartId = response._id;
                 if (!user) {
 
                     let newUser = {
@@ -24,7 +27,9 @@ export const intializePassport = () => {
                         last_name: "",
                         email: profile.id,
                         age: 18,
-                        password: createHash(v4()), //Creamos un hash a partir de un UID generado
+                        password: createHash(v4()), //Creamos un hash a partir de un UID generado,
+                        cartId,
+                        last_connection: currentDate()
                     };
                     const result = await sessionModel.create(newUser);
                     done(null, result);
