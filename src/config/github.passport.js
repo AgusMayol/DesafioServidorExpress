@@ -3,7 +3,7 @@ import GithubStrategy from "passport-github2";
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { createHash } from "../utils.js";
 import { v4 } from 'uuid';
-import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK_URL } from "../config.js";
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK_URL, URL } from "../config.js";
 
 export const intializePassport = () => {
     passport.use(
@@ -12,7 +12,7 @@ export const intializePassport = () => {
             {
                 clientID: GITHUB_CLIENT_ID,
                 clientSecret: GITHUB_CLIENT_SECRET,
-                callbackURL: GITHUB_CALLBACK_URL,
+                callbackURL: URL + GITHUB_CALLBACK_URL,
             },
             async (accessToken, refreshToken, profile, done) => {
                 //Como no me provee un email, vamos a hacer que github añada el id en lugar de email.

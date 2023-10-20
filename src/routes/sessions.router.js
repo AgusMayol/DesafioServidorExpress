@@ -4,7 +4,7 @@ import { resetPasswordModel } from "../daos/mongodb/models/resetPassword.model.j
 import { sessionModel } from "../daos/mongodb/models/sessions.model.js";
 import { cartModel } from "../daos/mongodb/models/carts.model.js";
 import { sendEmail } from "../mail.js";
-import { PORT } from "../config.js";
+import { PORT, URL } from "../config.js";
 import errors from "../errors.json" assert { type: 'json' };
 import passport from "passport";
 import multer from "multer";
@@ -61,7 +61,7 @@ router.delete("/", async (req, res) => {
         let ultimaConexion = user.last_connection.substring(8, 10)
         if ((fechaActual - ultimaConexion) > 2)
             await sessionModel.deleteOne({ _id: user._id });
-        sendEmail(user.email, "Your account has been deleted", `Hello ${user.first_name}, your account has been removed from our e-commerce because inactivity. If you would like to recover it, please create a new one`, `<a href="http://localhost:${PORT}/register">here</a>`)
+        sendEmail(user.email, "Your account has been deleted", `Hello ${user.first_name}, your account has been removed from our e-commerce because inactivity. If you would like to recover it, please create a new one`, `<a href="${URL}/register">here</a>`)
         usuariosEliminados.push(user);
     }
 
@@ -168,7 +168,7 @@ router.get("/requestRestartPassword/:email", async (req, res) => {
 
         let resetPassword = await resetPasswordModel.create({ userID: user._id, isValid: true });
 
-        sendEmail(email, "Password reset", `Hello ${user.first_name}, follow the link below to recover your password.`, `<a href="http://localhost:${PORT}/resetPassword/${user._id}/${resetPassword._id}/${resetPassword.code}">Reset password</a>`)
+        sendEmail(email, "Password reset", `Hello ${user.first_name}, follow the link below to recover your password.`, `<a href="${URL}/resetPassword/${user._id}/${resetPassword._id}/${resetPassword.code}">Reset password</a>`)
 
         res.send({ status: "success", message: "Password reset sent successfully to your email" });
 
